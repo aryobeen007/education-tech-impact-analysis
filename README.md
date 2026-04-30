@@ -6,6 +6,24 @@ A data engineering and analytics project analyzing the relationship between educ
 
 
 
+\## 🏗️ Project Architecture
+
+
+
+\## 📊 Planned Outputs
+
+
+
+\- State-level performance trends (NAEP)
+
+\- Technology access vs outcomes analysis
+
+\- District-level comparisons
+
+\- Interactive Tableau dashboard
+
+
+
 \## Project Objective
 
 
