@@ -261,3 +261,156 @@ LIMIT 5;
 # Display the first five records from PostgreSQL.
 pd.read_sql(district_preview_query, engine)
 ```
+
+## Creating the State Dimension Table
+
+To support state-level analysis, I create a separate state dimension table from the cleaned district dataset.
+
+This table stores one unique record per state and allows future fact tables to connect district-level data to state-level summaries.
+
+```{python}
+# Create the state dimension table from the cleaned district dataset.
+df_state_dim = (
+    df_district_dim[["state_code", "state_name"]]
+    .drop_duplicates()
+    .sort_values(by="state_code")
+    .reset_index(drop=True)
+)
+
+# Add a numeric state key for PostgreSQL modeling.
+df_state_dim.insert(0, "state_key", range(1, len(df_state_dim) + 1))
+
+# Display the state dimension table.
+df_state_dim.head()
+```
+
+## Loading the State Dimension Table into PostgreSQL
+
+After creating the state dimension dataset, I load the table into PostgreSQL for future state-level analytics and reporting.
+
+```{python}
+# Load the state dimension table into PostgreSQL.
+df_state_dim.to_sql(
+    name="dim_states",
+    con=engine,
+    schema="public",
+    if_exists="replace",
+    index=False
+)
+
+# Confirm successful PostgreSQL table creation.
+print("State dimension table loaded successfully into PostgreSQL.")
+```
+
+## Verifying the State Dimension Table in PostgreSQL
+
+To confirm the state dimension table loaded successfully, I query PostgreSQL and count the total number of state records.
+
+```{python}
+state_count_query = """
+SELECT COUNT(*) AS total_state_records
+FROM public.dim_states;
+"""
+
+pd.read_sql(state_count_query, engine)
+```
+
+## Creating the District School Counts Fact Table
+
+To support analytical reporting, I create the first fact table using district-level school count data.
+
+This table connects each district to its state and stores the number of operational schools reported in the CCD dataset.
+
+```{python}
+# Create a fact table for district-level school counts.
+fact_district_school_counts = df_district_dim[
+    [
+        "district_id",
+        "state_code",
+        "operational_schools"
+    ]
+].copy()
+
+# Rename the school count column to make the metric purpose clear.
+fact_district_school_counts = fact_district_school_counts.rename(
+    columns={"operational_schools": "operational_school_count"}
+)
+
+# Display the first five records from the fact table.
+fact_district_school_counts.head()
+```
+
+## Loading the District School Counts Fact Table into PostgreSQL
+
+After creating the district school counts fact table, I load it into PostgreSQL so it can be queried with SQL and used for future dashboard analysis.
+
+```{python}
+# Load the district school counts fact table into PostgreSQL.
+fact_district_school_counts.to_sql(
+    name="fact_district_school_counts",
+    con=engine,
+    schema="public",
+    if_exists="replace",
+    index=False
+)
+
+# Confirm successful PostgreSQL table creation.
+print("District school counts fact table loaded successfully into PostgreSQL.")
+```
+
+## Analyzing States with the Highest Number of Operational Schools
+
+To begin the analytical portion of the project, I query PostgreSQL to identify which states have the highest total number of operational schools.
+
+This query joins the state dimension table with the district school counts fact table and aggregates the results at the state level.
+
+```{python}
+# SQL query to identify states with the highest operational school counts.
+top_states_query = """
+SELECT
+    ds.state_name,
+    SUM(f.operational_school_count) AS total_operational_schools
+FROM public.fact_district_school_counts f
+JOIN public.dim_states ds
+    ON f.state_code = ds.state_code
+GROUP BY ds.state_name
+ORDER BY total_operational_schools DESC
+LIMIT 10;
+"""
+
+# Execute the SQL query and display the results.
+pd.read_sql(top_states_query, engine)
+```
+## Visualizing the Top 10 States by Operational Schools
+
+To make the SQL analysis easier to interpret, I create a bar chart showing the top 10 states by total operational school count.
+
+This visualization helps translate the PostgreSQL query results into a clear portfolio-ready analytical output.
+
+```{python}
+import matplotlib.pyplot as plt
+
+# Store the SQL query result in a DataFrame for visualization.
+top_states_df = pd.read_sql(top_states_query, engine)
+
+# Create a horizontal bar chart for readability.
+plt.figure(figsize=(10, 6))
+plt.barh(
+    top_states_df["state_name"],
+    top_states_df["total_operational_schools"]
+)
+
+# Invert the y-axis so the state with the highest count appears at the top.
+plt.gca().invert_yaxis()
+
+# Add chart labels and title.
+plt.title("Top 10 States by Operational School Count")
+plt.xlabel("Total Operational Schools")
+plt.ylabel("State")
+
+# Improve spacing so labels do not overlap.
+plt.tight_layout()
+
+# Display the chart in the Quarto HTML report.
+plt.show()
+```
