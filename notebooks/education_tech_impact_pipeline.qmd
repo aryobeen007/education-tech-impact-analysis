@@ -414,3 +414,72 @@ plt.tight_layout()
 # Display the chart in the Quarto HTML report.
 plt.show()
 ```
+## Analyzing Average Operational Schools per District by State
+
+To compare state-level district structures, I calculate the average number of operational schools per district for each state.
+
+This helps show which states tend to have larger or smaller district-level school systems.
+
+```{python}
+# SQL query to calculate the average number of operational schools per district by state.
+avg_schools_per_district_query = """
+SELECT
+    ds.state_name,
+    ROUND(AVG(f.operational_school_count)::numeric, 2) AS avg_operational_schools_per_district
+FROM public.fact_district_school_counts f
+JOIN public.dim_states ds
+    ON f.state_code = ds.state_code
+GROUP BY ds.state_name
+ORDER BY avg_operational_schools_per_district DESC
+LIMIT 10;
+"""
+
+# Execute the SQL query and display the results.
+pd.read_sql(avg_schools_per_district_query, engine)
+```
+
+## Visualizing Average Operational Schools per District by State
+
+To better interpret the state-level district averages, I create a second visualization showing the average number of operational schools per district.
+
+```{python}
+# Store the SQL query result in a DataFrame for visualization.
+avg_schools_df = pd.read_sql(avg_schools_per_district_query, engine)
+
+# Create a horizontal bar chart.
+plt.figure(figsize=(10, 6))
+plt.barh(
+    avg_schools_df["state_name"],
+    avg_schools_df["avg_operational_schools_per_district"]
+)
+
+# Display the highest averages at the top.
+plt.gca().invert_yaxis()
+
+# Add chart labels and title.
+plt.title("Average Operational Schools per District by State")
+plt.xlabel("Average Operational Schools")
+plt.ylabel("State")
+
+# Improve chart spacing.
+plt.tight_layout()
+
+# Display the visualization.
+plt.show()
+```
+## Next Steps in the Project
+
+This project currently focuses on building the foundational ETL and analytical reporting workflow using CCD district-level education data.
+
+Future phases of the project will expand the analysis by integrating additional national education datasets, including:
+
+- NAEP academic performance data
+- CRDC technology and digital access data
+- Multi-year trend analysis
+- State-level technology adoption metrics
+- Educational outcome comparisons
+- Tableau dashboard development
+- Statistical correlation analysis
+
+The long-term goal of this project is to evaluate whether increased technology adoption in public schools is associated with measurable differences in educational outcomes across states and districts.
+
