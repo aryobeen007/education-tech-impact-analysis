@@ -575,3 +575,256 @@ df_year_dim = pd.DataFrame({
 df_year_dim
 ```
 
+## Loading the Year Dimension Table into PostgreSQL
+
+After creating the year dimension table, I load it into PostgreSQL so future CCD, NAEP, and CRDC datasets can connect to a consistent reporting year structure.
+
+```{python}
+# Load the year dimension table into PostgreSQL.
+df_year_dim.to_sql(
+    name="dim_years",
+    con=engine,
+    schema="public",
+    if_exists="replace",
+    index=False
+)
+
+# Confirm successful PostgreSQL table creation.
+print("Year dimension table loaded successfully into PostgreSQL.")
+```
+
+## Verifying the Year Dimension Table in PostgreSQL
+
+To confirm the year dimension table loaded correctly, I query PostgreSQL and display the stored reporting years.
+
+```{python}
+# Query PostgreSQL to display the year dimension table.
+year_dimension_query = """
+SELECT *
+FROM public.dim_years
+ORDER BY reporting_year;
+"""
+
+# Display the year dimension records.
+pd.read_sql(year_dimension_query, engine)
+```
+
+## Adding a Surrogate Key to the State Dimension
+
+To improve warehouse design and prepare for future multi-dataset integration, I create a surrogate key for the state dimension table.
+
+
+## Creating the State Dimension Table with Surrogate Keys
+
+To support future warehouse joins and multi-dataset integration, I create a dedicated state dimension table with surrogate integer keys.
+
+```{python}
+# Create a unique state dimension table from the district dimension dataset.
+df_states_dim = (
+    df_district_dim[
+        ["state_code", "state_name"]
+    ]
+    .drop_duplicates()
+    .sort_values("state_name")
+    .reset_index(drop=True)
+)
+
+# Add a surrogate integer key for each state.
+df_states_dim.insert(
+    0,
+    "state_key",
+    range(1, len(df_states_dim) + 1)
+)
+
+# Display the state dimension table.
+df_states_dim.head()
+```
+
+## Loading the Enhanced State Dimension into PostgreSQL
+
+After adding surrogate keys to the state dimension table, I load the enhanced warehouse dimension into PostgreSQL.
+
+```{python}
+# Load the enhanced state dimension table into PostgreSQL.
+df_states_dim.to_sql(
+    name="dim_states",
+    con=engine,
+    schema="public",
+    if_exists="replace",
+    index=False
+)
+
+# Confirm successful PostgreSQL table creation.
+print("Enhanced state dimension table loaded successfully into PostgreSQL.")
+```
+## Verifying the Enhanced State Dimension in PostgreSQL
+
+To confirm the enhanced state dimension table loaded correctly, I query PostgreSQL and display the stored surrogate keys and state records.
+
+```{python}
+# Query PostgreSQL to display the enhanced state dimension table.
+state_dimension_query = """
+SELECT *
+FROM public.dim_states
+ORDER BY state_key;
+"""
+
+# Display the PostgreSQL state dimension table.
+pd.read_sql(state_dimension_query, engine)
+```
+## Creating an Enhanced Fact Table with Surrogate Keys
+
+To improve warehouse normalization and prepare for future multi-dataset integration, I create an enhanced fact table that connects to the state dimension using surrogate keys.
+
+```{python}
+# Merge the existing district school counts fact table with the enhanced state dimension.
+df_fact_enhanced = fact_district_school_counts.merge(
+    df_states_dim[
+        ["state_key", "state_code"]
+    ],
+    on="state_code",
+    how="left"
+)
+
+# Reorder columns for warehouse modeling.
+df_fact_enhanced = df_fact_enhanced[
+    [
+        "district_id",
+        "state_key",
+        "state_code",
+        "operational_school_count"
+    ]
+]
+
+# Display the enhanced fact table.
+df_fact_enhanced.head()
+```
+## Loading the Enhanced District School Counts Fact Table into PostgreSQL
+
+After adding the state surrogate key to the fact table, I load the enhanced fact table into PostgreSQL for improved warehouse-style analytics.
+
+```{python}
+# Load the enhanced district school counts fact table into PostgreSQL.
+df_fact_enhanced.to_sql(
+    name="fact_district_school_counts_enhanced",
+    con=engine,
+    schema="public",
+    if_exists="replace",
+    index=False
+)
+
+# Confirm successful PostgreSQL table creation.
+print("Enhanced district school counts fact table loaded successfully into PostgreSQL.")
+```
+## Verifying the Enhanced Fact Table in PostgreSQL
+
+To confirm the enhanced fact table loaded correctly, I query PostgreSQL and display the warehouse-ready records with surrogate state keys.
+
+```{python}
+# Query PostgreSQL to display the enhanced fact table.
+enhanced_fact_query = """
+SELECT *
+FROM public.fact_district_school_counts_enhanced
+LIMIT 10;
+"""
+
+# Display the enhanced PostgreSQL fact table.
+pd.read_sql(enhanced_fact_query, engine)
+```
+## Analyzing Operational Schools Using the Enhanced Warehouse Model
+
+To validate the enhanced warehouse model, I run an analytical SQL query using the enhanced fact table and the state dimension table.
+
+This confirms that the surrogate-key relationship supports state-level aggregation correctly.
+
+```{python}
+# SQL query using the enhanced fact table and state surrogate key relationship.
+enhanced_state_analysis_query = """
+SELECT
+    ds.state_name,
+    SUM(f.operational_school_count) AS total_operational_schools
+FROM public.fact_district_school_counts_enhanced f
+JOIN public.dim_states ds
+    ON f.state_key = ds.state_key
+GROUP BY ds.state_name
+ORDER BY total_operational_schools DESC
+LIMIT 10;
+"""
+
+# Display the top states using the enhanced warehouse model.
+pd.read_sql(enhanced_state_analysis_query, engine)
+```
+## Visualizing Operational Schools Using the Enhanced Warehouse Model
+
+To make the enhanced warehouse analysis easier to interpret, I create a visualization using the surrogate-key fact table and state dimension relationship.
+
+```{python}
+# Store the enhanced SQL analysis result in a DataFrame.
+enhanced_state_analysis_df = pd.read_sql(enhanced_state_analysis_query, engine)
+
+# Create a horizontal bar chart.
+plt.figure(figsize=(10, 6))
+plt.barh(
+    enhanced_state_analysis_df["state_name"],
+    enhanced_state_analysis_df["total_operational_schools"]
+)
+
+# Display the highest values at the top.
+plt.gca().invert_yaxis()
+
+# Add chart labels and title.
+plt.title("Top 10 States by Operational Schools - Enhanced Warehouse Model")
+plt.xlabel("Total Operational Schools")
+plt.ylabel("State")
+
+# Improve chart spacing.
+plt.tight_layout()
+
+# Display the visualization.
+plt.show()
+```
+## Designing a Future Educational Metrics Fact Table
+
+To prepare for future NAEP and CRDC integration, I design a reusable educational metrics fact table structure.
+
+This future warehouse table will support educational outcome analysis across districts, states, and reporting years.
+
+```{python}
+# Create an empty educational metrics fact table structure.
+df_educational_metrics_fact = pd.DataFrame({
+    "district_id": pd.Series(dtype="object"),
+    "state_key": pd.Series(dtype="int"),
+    "year_key": pd.Series(dtype="int"),
+    "metric_name": pd.Series(dtype="object"),
+    "metric_value": pd.Series(dtype="float")
+})
+
+# Display the warehouse-ready fact table structure.
+df_educational_metrics_fact
+```
+## Future Educational Analytics Warehouse Roadmap
+
+The long-term goal of this project is to build a multi-source educational analytics warehouse capable of analyzing relationships between technology adoption and educational outcomes across U.S. public schools.
+
+### Planned Future Data Sources
+
+| Dataset | Purpose |
+|---|---|
+| CCD (Common Core of Data) | District and school operational data |
+| NAEP | Academic performance and assessment metrics |
+| CRDC | Technology access and digital equity indicators |
+
+### Planned Future Analytical Capabilities
+
+| Capability | Description |
+|---|---|
+| Longitudinal Analysis | Multi-year educational trend analysis |
+| State Comparisons | Cross-state educational benchmarking |
+| Technology Impact Analysis | Relationship between technology access and student outcomes |
+| Dashboard Reporting | Interactive business intelligence reporting |
+| Statistical Modeling | Correlation and regression analysis |
+
+This warehouse foundation will support future educational research, analytics engineering workflows, and large-scale public education analysis.
+
+
+

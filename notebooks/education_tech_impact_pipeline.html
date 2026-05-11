@@ -111,7 +111,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </header>
 
 
-<div id="582ef87d" class="cell" data-execution_count="1">
+<div id="97e332f6" class="cell" data-execution_count="1">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> os</span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> psycopg2</span>
@@ -183,7 +183,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <p>In this step, I load the Common Core of Data (CCD) dataset into Python for initial inspection and preprocessing.</p>
 <p>This dataset contains district-level information including enrollment, number of schools, and geographic details.</p>
 <p>I use pandas to read the CSV file and examine its structure before loading it into PostgreSQL.</p>
-<div id="9f675206" class="cell" data-execution_count="2">
+<div id="34fac7c7" class="cell" data-execution_count="2">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Define the relative path to the CCD dataset.</span></span>
 <span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="co"># The raw data is stored locally and excluded from GitHub using .gitignore.</span></span>
 <span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>file_path <span class="op">=</span> <span class="st">"../data/raw/ccd/ccd_lea_2024.csv"</span></span>
@@ -195,10 +195,10 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a><span class="co"># Display the first five records to confirm the file loaded correctly.</span></span>
 <span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a>df_ccd.head()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stderr">
-<pre><code>C:\Users\User\AppData\Local\Temp\ipykernel_14656\1148928295.py:7: DtypeWarning: Columns (0: MSTREET3) have mixed types. Specify dtype option on import or set low_memory=False.
+<pre><code>C:\Users\User\AppData\Local\Temp\ipykernel_23428\1148928295.py:7: DtypeWarning: Columns (0: MSTREET3) have mixed types. Specify dtype option on import or set low_memory=False.
   df_ccd = pd.read_csv(file_path)</code></pre>
 </div>
-<div class="cell-output cell-output-display" data-execution_count="23">
+<div class="cell-output cell-output-display" data-execution_count="2">
 <div>
 
 
@@ -362,7 +362,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <h2 class="anchored" data-anchor-id="initial-data-inspection-ccd-dataset">Initial Data Inspection — CCD Dataset</h2>
 <p>In this step, I inspect the CCD dataset to understand its size, structure, and key columns before performing any cleaning or transformation.</p>
 <p>This inspection helps confirm that the data loaded correctly and provides an initial understanding of the fields available for analysis.</p>
-<div id="eeeec528" class="cell" data-execution_count="3">
+<div id="f031efb6" class="cell" data-execution_count="3">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Display the number of rows and columns in the CCD dataset.</span></span>
 <span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="co"># This gives me a quick overview of the dataset size before cleaning.</span></span>
 <span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>row_count, column_count <span class="op">=</span> df_ccd.shape</span>
@@ -376,7 +376,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <pre><code>Number of rows: 19630
 Number of columns: 58</code></pre>
 </div>
-<div class="cell-output cell-output-display" data-execution_count="24">
+<div class="cell-output cell-output-display" data-execution_count="3">
 <pre><code>['SCHOOL_YEAR',
  'FIPST',
  'STATENAME',
@@ -442,7 +442,7 @@ Number of columns: 58</code></pre>
 <h2 class="anchored" data-anchor-id="selecting-district-level-columns">Selecting District-Level Columns</h2>
 <p>In this step, I identify the key district-level fields that will be used to build the district dimension table in PostgreSQL.</p>
 <p>The CCD dataset contains many administrative and metadata fields. For the initial data model, I focus on the core district identification and geographic columns needed for analysis.</p>
-<div id="66498bdb" class="cell" data-execution_count="4">
+<div id="79f93dda" class="cell" data-execution_count="4">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Select district-related columns needed for the dimension table.</span></span>
 <span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>district_columns <span class="op">=</span> [</span>
 <span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>    <span class="st">"LEAID"</span>,</span>
@@ -459,7 +459,7 @@ Number of columns: 58</code></pre>
 <span id="cb8-14"><a href="#cb8-14" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb8-15"><a href="#cb8-15" aria-hidden="true" tabindex="-1"></a><span class="co"># Display the first five district records.</span></span>
 <span id="cb8-16"><a href="#cb8-16" aria-hidden="true" tabindex="-1"></a>df_districts.head()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-display" data-execution_count="25">
+<div class="cell-output cell-output-display" data-execution_count="4">
 <div>
 
 
@@ -538,7 +538,7 @@ Number of columns: 58</code></pre>
 <h2 class="anchored" data-anchor-id="cleaning-the-district-dimension-dataset">Cleaning the District Dimension Dataset</h2>
 <p>Before loading the district data into PostgreSQL, I clean the dataset to remove duplicate districts and standardize the column structure.</p>
 <p>This step helps ensure the dimension table contains one unique record per school district.</p>
-<div id="605268ae" class="cell" data-execution_count="5">
+<div id="a45fe745" class="cell" data-execution_count="5">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Create a copy of the district DataFrame to preserve the original dataset.</span></span>
 <span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>df_district_dim <span class="op">=</span> df_districts.copy()</span>
 <span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a></span>
@@ -561,7 +561,7 @@ Number of columns: 58</code></pre>
 <span id="cb9-20"><a href="#cb9-20" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb9-21"><a href="#cb9-21" aria-hidden="true" tabindex="-1"></a><span class="co"># Display the cleaned district dimension dataset.</span></span>
 <span id="cb9-22"><a href="#cb9-22" aria-hidden="true" tabindex="-1"></a>df_district_dim.head()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-display" data-execution_count="26">
+<div class="cell-output cell-output-display" data-execution_count="5">
 <div>
 
 
@@ -640,7 +640,7 @@ Number of columns: 58</code></pre>
 <h2 class="anchored" data-anchor-id="loading-the-district-dimension-table-into-postgresql">Loading the District Dimension Table into PostgreSQL</h2>
 <p>After cleaning the district dataset, I load the data into PostgreSQL as a dimension table.</p>
 <p>This step creates the foundation for future analytics and fact tables that will be connected through district identifiers.</p>
-<div id="85acbb05" class="cell" data-execution_count="6">
+<div id="f0791c46" class="cell" data-execution_count="6">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb10"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Load the cleaned district dimension dataset into PostgreSQL.</span></span>
 <span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a><span class="co"># if_exists="replace" allows this workflow to be rerun during development</span></span>
 <span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a><span class="co"># without creating duplicate tables or duplicate records.</span></span>
@@ -662,7 +662,7 @@ Number of columns: 58</code></pre>
 <section id="verifying-the-postgresql-target-database" class="level2">
 <h2 class="anchored" data-anchor-id="verifying-the-postgresql-target-database">Verifying the PostgreSQL Target Database</h2>
 <p>Before continuing, I verify which PostgreSQL database the workflow is connected to and confirm where the table was created.</p>
-<div id="50781db9" class="cell" data-execution_count="7">
+<div id="f2f6e91b" class="cell" data-execution_count="7">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb12"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Query PostgreSQL to confirm the active database, schema, and user.</span></span>
 <span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>connection_check_query <span class="op">=</span> <span class="st">"""</span></span>
 <span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a><span class="st">SELECT</span></span>
@@ -673,7 +673,7 @@ Number of columns: 58</code></pre>
 <span id="cb12-8"><a href="#cb12-8" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb12-9"><a href="#cb12-9" aria-hidden="true" tabindex="-1"></a><span class="co"># Display the PostgreSQL connection details.</span></span>
 <span id="cb12-10"><a href="#cb12-10" aria-hidden="true" tabindex="-1"></a>pd.read_sql(connection_check_query, engine)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-display" data-execution_count="28">
+<div class="cell-output cell-output-display" data-execution_count="7">
 <div>
 
 
@@ -703,7 +703,7 @@ Number of columns: 58</code></pre>
 <section id="verifying-the-district-dimension-table-in-postgresql" class="level2">
 <h2 class="anchored" data-anchor-id="verifying-the-district-dimension-table-in-postgresql">Verifying the District Dimension Table in PostgreSQL</h2>
 <p>After loading the district dimension table, I verify that the table exists inside PostgreSQL.</p>
-<div id="3c1a2cfb" class="cell" data-execution_count="8">
+<div id="c6129e50" class="cell" data-execution_count="8">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb13"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Query PostgreSQL to confirm the dimension table exists.</span></span>
 <span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>table_check_query <span class="op">=</span> <span class="st">"""</span></span>
 <span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a><span class="st">SELECT</span></span>
@@ -716,7 +716,7 @@ Number of columns: 58</code></pre>
 <span id="cb13-10"><a href="#cb13-10" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb13-11"><a href="#cb13-11" aria-hidden="true" tabindex="-1"></a><span class="co"># Display matching PostgreSQL tables.</span></span>
 <span id="cb13-12"><a href="#cb13-12" aria-hidden="true" tabindex="-1"></a>pd.read_sql(table_check_query, engine)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-display" data-execution_count="29">
+<div class="cell-output cell-output-display" data-execution_count="8">
 <div>
 
 
@@ -744,7 +744,7 @@ Number of columns: 58</code></pre>
 <section id="counting-records-in-the-district-dimension-table" class="level2">
 <h2 class="anchored" data-anchor-id="counting-records-in-the-district-dimension-table">Counting Records in the District Dimension Table</h2>
 <p>To confirm the table was loaded correctly, I query PostgreSQL and count the total number of district records stored in the dimension table.</p>
-<div id="c259839a" class="cell" data-execution_count="9">
+<div id="1ab5b813" class="cell" data-execution_count="9">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb14"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Count records inside the PostgreSQL dimension table.</span></span>
 <span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>district_count_query <span class="op">=</span> <span class="st">"""</span></span>
 <span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a><span class="st">SELECT COUNT(*) AS total_district_records</span></span>
@@ -753,7 +753,7 @@ Number of columns: 58</code></pre>
 <span id="cb14-6"><a href="#cb14-6" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb14-7"><a href="#cb14-7" aria-hidden="true" tabindex="-1"></a><span class="co"># Display the total number of district records.</span></span>
 <span id="cb14-8"><a href="#cb14-8" aria-hidden="true" tabindex="-1"></a>pd.read_sql(district_count_query, engine)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-display" data-execution_count="30">
+<div class="cell-output cell-output-display" data-execution_count="9">
 <div>
 
 
@@ -779,7 +779,7 @@ Number of columns: 58</code></pre>
 <section id="previewing-records-from-the-district-dimension-table" class="level2">
 <h2 class="anchored" data-anchor-id="previewing-records-from-the-district-dimension-table">Previewing Records from the District Dimension Table</h2>
 <p>As a final validation step, I preview the first few records directly from the PostgreSQL table.</p>
-<div id="49fe15ce" class="cell" data-execution_count="10">
+<div id="126b9dc7" class="cell" data-execution_count="10">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb15"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Preview records directly from the PostgreSQL dimension table.</span></span>
 <span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>district_preview_query <span class="op">=</span> <span class="st">"""</span></span>
 <span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a><span class="st">SELECT</span></span>
@@ -795,7 +795,7 @@ Number of columns: 58</code></pre>
 <span id="cb15-13"><a href="#cb15-13" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb15-14"><a href="#cb15-14" aria-hidden="true" tabindex="-1"></a><span class="co"># Display the first five records from PostgreSQL.</span></span>
 <span id="cb15-15"><a href="#cb15-15" aria-hidden="true" tabindex="-1"></a>pd.read_sql(district_preview_query, engine)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-display" data-execution_count="31">
+<div class="cell-output cell-output-display" data-execution_count="10">
 <div>
 
 
@@ -868,7 +868,7 @@ Number of columns: 58</code></pre>
 <h2 class="anchored" data-anchor-id="creating-the-state-dimension-table">Creating the State Dimension Table</h2>
 <p>To support state-level analysis, I create a separate state dimension table from the cleaned district dataset.</p>
 <p>This table stores one unique record per state and allows future fact tables to connect district-level data to state-level summaries.</p>
-<div id="0b904bd6" class="cell" data-execution_count="11">
+<div id="89f1c073" class="cell" data-execution_count="11">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb16"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Create the state dimension table from the cleaned district dataset.</span></span>
 <span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>df_state_dim <span class="op">=</span> (</span>
 <span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a>    df_district_dim[[<span class="st">"state_code"</span>, <span class="st">"state_name"</span>]]</span>
@@ -882,7 +882,7 @@ Number of columns: 58</code></pre>
 <span id="cb16-11"><a href="#cb16-11" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb16-12"><a href="#cb16-12" aria-hidden="true" tabindex="-1"></a><span class="co"># Display the state dimension table.</span></span>
 <span id="cb16-13"><a href="#cb16-13" aria-hidden="true" tabindex="-1"></a>df_state_dim.head()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-display" data-execution_count="32">
+<div class="cell-output cell-output-display" data-execution_count="11">
 <div>
 
 
@@ -936,7 +936,7 @@ Number of columns: 58</code></pre>
 <section id="loading-the-state-dimension-table-into-postgresql" class="level2">
 <h2 class="anchored" data-anchor-id="loading-the-state-dimension-table-into-postgresql">Loading the State Dimension Table into PostgreSQL</h2>
 <p>After creating the state dimension dataset, I load the table into PostgreSQL for future state-level analytics and reporting.</p>
-<div id="723dd759" class="cell" data-execution_count="12">
+<div id="c1fceb6d" class="cell" data-execution_count="12">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb17"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Load the state dimension table into PostgreSQL.</span></span>
 <span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a>df_state_dim.to_sql(</span>
 <span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a>    name<span class="op">=</span><span class="st">"dim_states"</span>,</span>
@@ -956,14 +956,14 @@ Number of columns: 58</code></pre>
 <section id="verifying-the-state-dimension-table-in-postgresql" class="level2">
 <h2 class="anchored" data-anchor-id="verifying-the-state-dimension-table-in-postgresql">Verifying the State Dimension Table in PostgreSQL</h2>
 <p>To confirm the state dimension table loaded successfully, I query PostgreSQL and count the total number of state records.</p>
-<div id="2ac0eabf" class="cell" data-execution_count="13">
+<div id="da231fa3" class="cell" data-execution_count="13">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb19"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a>state_count_query <span class="op">=</span> <span class="st">"""</span></span>
 <span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a><span class="st">SELECT COUNT(*) AS total_state_records</span></span>
 <span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a><span class="st">FROM public.dim_states;</span></span>
 <span id="cb19-4"><a href="#cb19-4" aria-hidden="true" tabindex="-1"></a><span class="st">"""</span></span>
 <span id="cb19-5"><a href="#cb19-5" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb19-6"><a href="#cb19-6" aria-hidden="true" tabindex="-1"></a>pd.read_sql(state_count_query, engine)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-display" data-execution_count="34">
+<div class="cell-output cell-output-display" data-execution_count="13">
 <div>
 
 
@@ -990,7 +990,7 @@ Number of columns: 58</code></pre>
 <h2 class="anchored" data-anchor-id="creating-the-district-school-counts-fact-table">Creating the District School Counts Fact Table</h2>
 <p>To support analytical reporting, I create the first fact table using district-level school count data.</p>
 <p>This table connects each district to its state and stores the number of operational schools reported in the CCD dataset.</p>
-<div id="4d888732" class="cell" data-execution_count="14">
+<div id="a93b358f" class="cell" data-execution_count="14">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb20"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Create a fact table for district-level school counts.</span></span>
 <span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a>fact_district_school_counts <span class="op">=</span> df_district_dim[</span>
 <span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a>    [</span>
@@ -1007,7 +1007,7 @@ Number of columns: 58</code></pre>
 <span id="cb20-14"><a href="#cb20-14" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb20-15"><a href="#cb20-15" aria-hidden="true" tabindex="-1"></a><span class="co"># Display the first five records from the fact table.</span></span>
 <span id="cb20-16"><a href="#cb20-16" aria-hidden="true" tabindex="-1"></a>fact_district_school_counts.head()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-display" data-execution_count="35">
+<div class="cell-output cell-output-display" data-execution_count="14">
 <div>
 
 
@@ -1061,7 +1061,7 @@ Number of columns: 58</code></pre>
 <section id="loading-the-district-school-counts-fact-table-into-postgresql" class="level2">
 <h2 class="anchored" data-anchor-id="loading-the-district-school-counts-fact-table-into-postgresql">Loading the District School Counts Fact Table into PostgreSQL</h2>
 <p>After creating the district school counts fact table, I load it into PostgreSQL so it can be queried with SQL and used for future dashboard analysis.</p>
-<div id="1f5ec061" class="cell" data-execution_count="15">
+<div id="b9208973" class="cell" data-execution_count="15">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb21"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Load the district school counts fact table into PostgreSQL.</span></span>
 <span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a>fact_district_school_counts.to_sql(</span>
 <span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a>    name<span class="op">=</span><span class="st">"fact_district_school_counts"</span>,</span>
@@ -1082,7 +1082,7 @@ Number of columns: 58</code></pre>
 <h2 class="anchored" data-anchor-id="analyzing-states-with-the-highest-number-of-operational-schools">Analyzing States with the Highest Number of Operational Schools</h2>
 <p>To begin the analytical portion of the project, I query PostgreSQL to identify which states have the highest total number of operational schools.</p>
 <p>This query joins the state dimension table with the district school counts fact table and aggregates the results at the state level.</p>
-<div id="fd4617f8" class="cell" data-execution_count="16">
+<div id="cef341c4" class="cell" data-execution_count="16">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb23"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="co"># SQL query to identify states with the highest operational school counts.</span></span>
 <span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a>top_states_query <span class="op">=</span> <span class="st">"""</span></span>
 <span id="cb23-3"><a href="#cb23-3" aria-hidden="true" tabindex="-1"></a><span class="st">SELECT</span></span>
@@ -1098,7 +1098,7 @@ Number of columns: 58</code></pre>
 <span id="cb23-13"><a href="#cb23-13" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb23-14"><a href="#cb23-14" aria-hidden="true" tabindex="-1"></a><span class="co"># Execute the SQL query and display the results.</span></span>
 <span id="cb23-15"><a href="#cb23-15" aria-hidden="true" tabindex="-1"></a>pd.read_sql(top_states_query, engine)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-display" data-execution_count="37">
+<div class="cell-output cell-output-display" data-execution_count="16">
 <div>
 
 
@@ -1172,7 +1172,7 @@ Number of columns: 58</code></pre>
 <h2 class="anchored" data-anchor-id="visualizing-the-top-10-states-by-operational-schools">Visualizing the Top 10 States by Operational Schools</h2>
 <p>To make the SQL analysis easier to interpret, I create a bar chart showing the top 10 states by total operational school count.</p>
 <p>This visualization helps translate the PostgreSQL query results into a clear portfolio-ready analytical output.</p>
-<div id="280a9f25" class="cell" data-execution_count="17">
+<div id="976df9b7" class="cell" data-execution_count="17">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb24"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> matplotlib.pyplot <span class="im">as</span> plt</span>
 <span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb24-3"><a href="#cb24-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Store the SQL query result in a DataFrame for visualization.</span></span>
@@ -1211,7 +1211,7 @@ Number of columns: 58</code></pre>
 <h2 class="anchored" data-anchor-id="analyzing-average-operational-schools-per-district-by-state">Analyzing Average Operational Schools per District by State</h2>
 <p>To compare state-level district structures, I calculate the average number of operational schools per district for each state.</p>
 <p>This helps show which states tend to have larger or smaller district-level school systems.</p>
-<div id="0759a088" class="cell" data-execution_count="18">
+<div id="e820d6df" class="cell" data-execution_count="18">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb25"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a><span class="co"># SQL query to calculate the average number of operational schools per district by state.</span></span>
 <span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a>avg_schools_per_district_query <span class="op">=</span> <span class="st">"""</span></span>
 <span id="cb25-3"><a href="#cb25-3" aria-hidden="true" tabindex="-1"></a><span class="st">SELECT</span></span>
@@ -1227,7 +1227,7 @@ Number of columns: 58</code></pre>
 <span id="cb25-13"><a href="#cb25-13" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb25-14"><a href="#cb25-14" aria-hidden="true" tabindex="-1"></a><span class="co"># Execute the SQL query and display the results.</span></span>
 <span id="cb25-15"><a href="#cb25-15" aria-hidden="true" tabindex="-1"></a>pd.read_sql(avg_schools_per_district_query, engine)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-display" data-execution_count="39">
+<div class="cell-output cell-output-display" data-execution_count="18">
 <div>
 
 
@@ -1300,7 +1300,7 @@ Number of columns: 58</code></pre>
 <section id="visualizing-average-operational-schools-per-district-by-state" class="level2">
 <h2 class="anchored" data-anchor-id="visualizing-average-operational-schools-per-district-by-state">Visualizing Average Operational Schools per District by State</h2>
 <p>To better interpret the state-level district averages, I create a second visualization showing the average number of operational schools per district.</p>
-<div id="ec6e07e1" class="cell" data-execution_count="19">
+<div id="1ed79c5a" class="cell" data-execution_count="19">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb26"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Store the SQL query result in a DataFrame for visualization.</span></span>
 <span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a>avg_schools_df <span class="op">=</span> pd.read_sql(avg_schools_per_district_query, engine)</span>
 <span id="cb26-3"><a href="#cb26-3" aria-hidden="true" tabindex="-1"></a></span>
@@ -1429,7 +1429,7 @@ Number of columns: 58</code></pre>
 <section id="data-quality-validation-checks" class="level2">
 <h2 class="anchored" data-anchor-id="data-quality-validation-checks">Data Quality Validation Checks</h2>
 <p>Before using the warehouse tables for analysis, I perform several basic data quality checks to validate the integrity of the transformed data.</p>
-<div id="40e4fcf4" class="cell" data-execution_count="20">
+<div id="538867f0" class="cell" data-execution_count="20">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb27"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Count missing district identifiers.</span></span>
 <span id="cb27-2"><a href="#cb27-2" aria-hidden="true" tabindex="-1"></a>missing_district_ids <span class="op">=</span> df_district_dim[<span class="st">"district_id"</span>].isnull().<span class="bu">sum</span>()</span>
 <span id="cb27-3"><a href="#cb27-3" aria-hidden="true" tabindex="-1"></a></span>
@@ -1454,7 +1454,7 @@ Number of columns: 58</code></pre>
 <span id="cb27-22"><a href="#cb27-22" aria-hidden="true" tabindex="-1"></a>})</span>
 <span id="cb27-23"><a href="#cb27-23" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb27-24"><a href="#cb27-24" aria-hidden="true" tabindex="-1"></a>validation_results</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-display" data-execution_count="41">
+<div class="cell-output cell-output-display" data-execution_count="20">
 <div>
 
 
@@ -1493,7 +1493,7 @@ Number of columns: 58</code></pre>
 <h2 class="anchored" data-anchor-id="creating-the-year-dimension-table">Creating the Year Dimension Table</h2>
 <p>To support future longitudinal and multi-year analysis, I create a year dimension table.</p>
 <p>This table will eventually connect CCD, NAEP, and CRDC datasets across multiple reporting years.</p>
-<div id="7b65aa05" class="cell" data-execution_count="21">
+<div id="3eacc687" class="cell" data-execution_count="21">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb28"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Define the reporting years planned for the project.</span></span>
 <span id="cb28-2"><a href="#cb28-2" aria-hidden="true" tabindex="-1"></a>analysis_years <span class="op">=</span> [</span>
 <span id="cb28-3"><a href="#cb28-3" aria-hidden="true" tabindex="-1"></a>    <span class="dv">2009</span>,</span>
@@ -1514,7 +1514,7 @@ Number of columns: 58</code></pre>
 <span id="cb28-18"><a href="#cb28-18" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb28-19"><a href="#cb28-19" aria-hidden="true" tabindex="-1"></a><span class="co"># Display the year dimension table.</span></span>
 <span id="cb28-20"><a href="#cb28-20" aria-hidden="true" tabindex="-1"></a>df_year_dim</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-display" data-execution_count="42">
+<div class="cell-output cell-output-display" data-execution_count="21">
 <div>
 
 
@@ -1573,6 +1573,1012 @@ Number of columns: 58</code></pre>
 </div>
 </div>
 </div>
+</section>
+<section id="loading-the-year-dimension-table-into-postgresql" class="level2">
+<h2 class="anchored" data-anchor-id="loading-the-year-dimension-table-into-postgresql">Loading the Year Dimension Table into PostgreSQL</h2>
+<p>After creating the year dimension table, I load it into PostgreSQL so future CCD, NAEP, and CRDC datasets can connect to a consistent reporting year structure.</p>
+<div id="7b16353d" class="cell" data-execution_count="22">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb29"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Load the year dimension table into PostgreSQL.</span></span>
+<span id="cb29-2"><a href="#cb29-2" aria-hidden="true" tabindex="-1"></a>df_year_dim.to_sql(</span>
+<span id="cb29-3"><a href="#cb29-3" aria-hidden="true" tabindex="-1"></a>    name<span class="op">=</span><span class="st">"dim_years"</span>,</span>
+<span id="cb29-4"><a href="#cb29-4" aria-hidden="true" tabindex="-1"></a>    con<span class="op">=</span>engine,</span>
+<span id="cb29-5"><a href="#cb29-5" aria-hidden="true" tabindex="-1"></a>    schema<span class="op">=</span><span class="st">"public"</span>,</span>
+<span id="cb29-6"><a href="#cb29-6" aria-hidden="true" tabindex="-1"></a>    if_exists<span class="op">=</span><span class="st">"replace"</span>,</span>
+<span id="cb29-7"><a href="#cb29-7" aria-hidden="true" tabindex="-1"></a>    index<span class="op">=</span><span class="va">False</span></span>
+<span id="cb29-8"><a href="#cb29-8" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb29-9"><a href="#cb29-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-10"><a href="#cb29-10" aria-hidden="true" tabindex="-1"></a><span class="co"># Confirm successful PostgreSQL table creation.</span></span>
+<span id="cb29-11"><a href="#cb29-11" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Year dimension table loaded successfully into PostgreSQL."</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Year dimension table loaded successfully into PostgreSQL.</code></pre>
+</div>
+</div>
+</section>
+<section id="verifying-the-year-dimension-table-in-postgresql" class="level2">
+<h2 class="anchored" data-anchor-id="verifying-the-year-dimension-table-in-postgresql">Verifying the Year Dimension Table in PostgreSQL</h2>
+<p>To confirm the year dimension table loaded correctly, I query PostgreSQL and display the stored reporting years.</p>
+<div id="17091039" class="cell" data-execution_count="23">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb31"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Query PostgreSQL to display the year dimension table.</span></span>
+<span id="cb31-2"><a href="#cb31-2" aria-hidden="true" tabindex="-1"></a>year_dimension_query <span class="op">=</span> <span class="st">"""</span></span>
+<span id="cb31-3"><a href="#cb31-3" aria-hidden="true" tabindex="-1"></a><span class="st">SELECT *</span></span>
+<span id="cb31-4"><a href="#cb31-4" aria-hidden="true" tabindex="-1"></a><span class="st">FROM public.dim_years</span></span>
+<span id="cb31-5"><a href="#cb31-5" aria-hidden="true" tabindex="-1"></a><span class="st">ORDER BY reporting_year;</span></span>
+<span id="cb31-6"><a href="#cb31-6" aria-hidden="true" tabindex="-1"></a><span class="st">"""</span></span>
+<span id="cb31-7"><a href="#cb31-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb31-8"><a href="#cb31-8" aria-hidden="true" tabindex="-1"></a><span class="co"># Display the year dimension records.</span></span>
+<span id="cb31-9"><a href="#cb31-9" aria-hidden="true" tabindex="-1"></a>pd.read_sql(year_dimension_query, engine)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-display" data-execution_count="23">
+<div>
+
+
+<table class="dataframe caption-top table table-sm table-striped small" data-border="1">
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th"></th>
+<th data-quarto-table-cell-role="th">year_key</th>
+<th data-quarto-table-cell-role="th">reporting_year</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">0</th>
+<td>1</td>
+<td>2009</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">1</th>
+<td>2</td>
+<td>2011</td>
+</tr>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">2</th>
+<td>3</td>
+<td>2013</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">3</th>
+<td>4</td>
+<td>2015</td>
+</tr>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">4</th>
+<td>5</td>
+<td>2017</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">5</th>
+<td>6</td>
+<td>2019</td>
+</tr>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">6</th>
+<td>7</td>
+<td>2022</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">7</th>
+<td>8</td>
+<td>2024</td>
+</tr>
+</tbody>
+</table>
+
+</div>
+</div>
+</div>
+</section>
+<section id="adding-a-surrogate-key-to-the-state-dimension" class="level2">
+<h2 class="anchored" data-anchor-id="adding-a-surrogate-key-to-the-state-dimension">Adding a Surrogate Key to the State Dimension</h2>
+<p>To improve warehouse design and prepare for future multi-dataset integration, I create a surrogate key for the state dimension table.</p>
+</section>
+<section id="creating-the-state-dimension-table-with-surrogate-keys" class="level2">
+<h2 class="anchored" data-anchor-id="creating-the-state-dimension-table-with-surrogate-keys">Creating the State Dimension Table with Surrogate Keys</h2>
+<p>To support future warehouse joins and multi-dataset integration, I create a dedicated state dimension table with surrogate integer keys.</p>
+<div id="fdd502ed" class="cell" data-execution_count="24">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb32"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Create a unique state dimension table from the district dimension dataset.</span></span>
+<span id="cb32-2"><a href="#cb32-2" aria-hidden="true" tabindex="-1"></a>df_states_dim <span class="op">=</span> (</span>
+<span id="cb32-3"><a href="#cb32-3" aria-hidden="true" tabindex="-1"></a>    df_district_dim[</span>
+<span id="cb32-4"><a href="#cb32-4" aria-hidden="true" tabindex="-1"></a>        [<span class="st">"state_code"</span>, <span class="st">"state_name"</span>]</span>
+<span id="cb32-5"><a href="#cb32-5" aria-hidden="true" tabindex="-1"></a>    ]</span>
+<span id="cb32-6"><a href="#cb32-6" aria-hidden="true" tabindex="-1"></a>    .drop_duplicates()</span>
+<span id="cb32-7"><a href="#cb32-7" aria-hidden="true" tabindex="-1"></a>    .sort_values(<span class="st">"state_name"</span>)</span>
+<span id="cb32-8"><a href="#cb32-8" aria-hidden="true" tabindex="-1"></a>    .reset_index(drop<span class="op">=</span><span class="va">True</span>)</span>
+<span id="cb32-9"><a href="#cb32-9" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb32-10"><a href="#cb32-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb32-11"><a href="#cb32-11" aria-hidden="true" tabindex="-1"></a><span class="co"># Add a surrogate integer key for each state.</span></span>
+<span id="cb32-12"><a href="#cb32-12" aria-hidden="true" tabindex="-1"></a>df_states_dim.insert(</span>
+<span id="cb32-13"><a href="#cb32-13" aria-hidden="true" tabindex="-1"></a>    <span class="dv">0</span>,</span>
+<span id="cb32-14"><a href="#cb32-14" aria-hidden="true" tabindex="-1"></a>    <span class="st">"state_key"</span>,</span>
+<span id="cb32-15"><a href="#cb32-15" aria-hidden="true" tabindex="-1"></a>    <span class="bu">range</span>(<span class="dv">1</span>, <span class="bu">len</span>(df_states_dim) <span class="op">+</span> <span class="dv">1</span>)</span>
+<span id="cb32-16"><a href="#cb32-16" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb32-17"><a href="#cb32-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb32-18"><a href="#cb32-18" aria-hidden="true" tabindex="-1"></a><span class="co"># Display the state dimension table.</span></span>
+<span id="cb32-19"><a href="#cb32-19" aria-hidden="true" tabindex="-1"></a>df_states_dim.head()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-display" data-execution_count="24">
+<div>
+
+
+<table class="dataframe caption-top table table-sm table-striped small" data-border="1">
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th"></th>
+<th data-quarto-table-cell-role="th">state_key</th>
+<th data-quarto-table-cell-role="th">state_code</th>
+<th data-quarto-table-cell-role="th">state_name</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">0</th>
+<td>1</td>
+<td>AL</td>
+<td>ALABAMA</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">1</th>
+<td>2</td>
+<td>AK</td>
+<td>ALASKA</td>
+</tr>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">2</th>
+<td>3</td>
+<td>AS</td>
+<td>AMERICAN SAMOA</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">3</th>
+<td>4</td>
+<td>AZ</td>
+<td>ARIZONA</td>
+</tr>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">4</th>
+<td>5</td>
+<td>AR</td>
+<td>ARKANSAS</td>
+</tr>
+</tbody>
+</table>
+
+</div>
+</div>
+</div>
+</section>
+<section id="loading-the-enhanced-state-dimension-into-postgresql" class="level2">
+<h2 class="anchored" data-anchor-id="loading-the-enhanced-state-dimension-into-postgresql">Loading the Enhanced State Dimension into PostgreSQL</h2>
+<p>After adding surrogate keys to the state dimension table, I load the enhanced warehouse dimension into PostgreSQL.</p>
+<div id="cd84ef81" class="cell" data-execution_count="25">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb33"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb33-1"><a href="#cb33-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Load the enhanced state dimension table into PostgreSQL.</span></span>
+<span id="cb33-2"><a href="#cb33-2" aria-hidden="true" tabindex="-1"></a>df_states_dim.to_sql(</span>
+<span id="cb33-3"><a href="#cb33-3" aria-hidden="true" tabindex="-1"></a>    name<span class="op">=</span><span class="st">"dim_states"</span>,</span>
+<span id="cb33-4"><a href="#cb33-4" aria-hidden="true" tabindex="-1"></a>    con<span class="op">=</span>engine,</span>
+<span id="cb33-5"><a href="#cb33-5" aria-hidden="true" tabindex="-1"></a>    schema<span class="op">=</span><span class="st">"public"</span>,</span>
+<span id="cb33-6"><a href="#cb33-6" aria-hidden="true" tabindex="-1"></a>    if_exists<span class="op">=</span><span class="st">"replace"</span>,</span>
+<span id="cb33-7"><a href="#cb33-7" aria-hidden="true" tabindex="-1"></a>    index<span class="op">=</span><span class="va">False</span></span>
+<span id="cb33-8"><a href="#cb33-8" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb33-9"><a href="#cb33-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb33-10"><a href="#cb33-10" aria-hidden="true" tabindex="-1"></a><span class="co"># Confirm successful PostgreSQL table creation.</span></span>
+<span id="cb33-11"><a href="#cb33-11" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Enhanced state dimension table loaded successfully into PostgreSQL."</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Enhanced state dimension table loaded successfully into PostgreSQL.</code></pre>
+</div>
+</div>
+</section>
+<section id="verifying-the-enhanced-state-dimension-in-postgresql" class="level2">
+<h2 class="anchored" data-anchor-id="verifying-the-enhanced-state-dimension-in-postgresql">Verifying the Enhanced State Dimension in PostgreSQL</h2>
+<p>To confirm the enhanced state dimension table loaded correctly, I query PostgreSQL and display the stored surrogate keys and state records.</p>
+<div id="ad54a1f6" class="cell" data-execution_count="26">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb35"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb35-1"><a href="#cb35-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Query PostgreSQL to display the enhanced state dimension table.</span></span>
+<span id="cb35-2"><a href="#cb35-2" aria-hidden="true" tabindex="-1"></a>state_dimension_query <span class="op">=</span> <span class="st">"""</span></span>
+<span id="cb35-3"><a href="#cb35-3" aria-hidden="true" tabindex="-1"></a><span class="st">SELECT *</span></span>
+<span id="cb35-4"><a href="#cb35-4" aria-hidden="true" tabindex="-1"></a><span class="st">FROM public.dim_states</span></span>
+<span id="cb35-5"><a href="#cb35-5" aria-hidden="true" tabindex="-1"></a><span class="st">ORDER BY state_key;</span></span>
+<span id="cb35-6"><a href="#cb35-6" aria-hidden="true" tabindex="-1"></a><span class="st">"""</span></span>
+<span id="cb35-7"><a href="#cb35-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb35-8"><a href="#cb35-8" aria-hidden="true" tabindex="-1"></a><span class="co"># Display the PostgreSQL state dimension table.</span></span>
+<span id="cb35-9"><a href="#cb35-9" aria-hidden="true" tabindex="-1"></a>pd.read_sql(state_dimension_query, engine)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-display" data-execution_count="26">
+<div>
+
+
+<table class="dataframe caption-top table table-sm table-striped small" data-border="1">
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th"></th>
+<th data-quarto-table-cell-role="th">state_key</th>
+<th data-quarto-table-cell-role="th">state_code</th>
+<th data-quarto-table-cell-role="th">state_name</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">0</th>
+<td>1</td>
+<td>AL</td>
+<td>ALABAMA</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">1</th>
+<td>2</td>
+<td>AK</td>
+<td>ALASKA</td>
+</tr>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">2</th>
+<td>3</td>
+<td>AS</td>
+<td>AMERICAN SAMOA</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">3</th>
+<td>4</td>
+<td>AZ</td>
+<td>ARIZONA</td>
+</tr>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">4</th>
+<td>5</td>
+<td>AR</td>
+<td>ARKANSAS</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">5</th>
+<td>6</td>
+<td>BI</td>
+<td>BUREAU OF INDIAN EDUCATION</td>
+</tr>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">6</th>
+<td>7</td>
+<td>CA</td>
+<td>CALIFORNIA</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">7</th>
+<td>8</td>
+<td>CO</td>
+<td>COLORADO</td>
+</tr>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">8</th>
+<td>9</td>
+<td>CT</td>
+<td>CONNECTICUT</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">9</th>
+<td>10</td>
+<td>DE</td>
+<td>DELAWARE</td>
+</tr>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">10</th>
+<td>11</td>
+<td>DC</td>
+<td>DISTRICT OF COLUMBIA</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">11</th>
+<td>12</td>
+<td>FL</td>
+<td>FLORIDA</td>
+</tr>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">12</th>
+<td>13</td>
+<td>GA</td>
+<td>GEORGIA</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">13</th>
+<td>14</td>
+<td>GU</td>
+<td>GUAM</td>
+</tr>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">14</th>
+<td>15</td>
+<td>HI</td>
+<td>HAWAII</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">15</th>
+<td>16</td>
+<td>ID</td>
+<td>IDAHO</td>
+</tr>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">16</th>
+<td>17</td>
+<td>IL</td>
+<td>ILLINOIS</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">17</th>
+<td>18</td>
+<td>IN</td>
+<td>INDIANA</td>
+</tr>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">18</th>
+<td>19</td>
+<td>IA</td>
+<td>IOWA</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">19</th>
+<td>20</td>
+<td>KS</td>
+<td>KANSAS</td>
+</tr>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">20</th>
+<td>21</td>
+<td>KY</td>
+<td>KENTUCKY</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">21</th>
+<td>22</td>
+<td>LA</td>
+<td>LOUISIANA</td>
+</tr>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">22</th>
+<td>23</td>
+<td>ME</td>
+<td>MAINE</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">23</th>
+<td>24</td>
+<td>MD</td>
+<td>MARYLAND</td>
+</tr>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">24</th>
+<td>25</td>
+<td>MA</td>
+<td>MASSACHUSETTS</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">25</th>
+<td>26</td>
+<td>MI</td>
+<td>MICHIGAN</td>
+</tr>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">26</th>
+<td>27</td>
+<td>MN</td>
+<td>MINNESOTA</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">27</th>
+<td>28</td>
+<td>MS</td>
+<td>MISSISSIPPI</td>
+</tr>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">28</th>
+<td>29</td>
+<td>MO</td>
+<td>MISSOURI</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">29</th>
+<td>30</td>
+<td>MT</td>
+<td>MONTANA</td>
+</tr>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">30</th>
+<td>31</td>
+<td>NE</td>
+<td>NEBRASKA</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">31</th>
+<td>32</td>
+<td>NV</td>
+<td>NEVADA</td>
+</tr>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">32</th>
+<td>33</td>
+<td>NH</td>
+<td>NEW HAMPSHIRE</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">33</th>
+<td>34</td>
+<td>NJ</td>
+<td>NEW JERSEY</td>
+</tr>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">34</th>
+<td>35</td>
+<td>NM</td>
+<td>NEW MEXICO</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">35</th>
+<td>36</td>
+<td>NY</td>
+<td>NEW YORK</td>
+</tr>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">36</th>
+<td>37</td>
+<td>NC</td>
+<td>NORTH CAROLINA</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">37</th>
+<td>38</td>
+<td>ND</td>
+<td>NORTH DAKOTA</td>
+</tr>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">38</th>
+<td>39</td>
+<td>MP</td>
+<td>NORTHERN MARIANAS</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">39</th>
+<td>40</td>
+<td>OH</td>
+<td>OHIO</td>
+</tr>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">40</th>
+<td>41</td>
+<td>OK</td>
+<td>OKLAHOMA</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">41</th>
+<td>42</td>
+<td>OR</td>
+<td>OREGON</td>
+</tr>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">42</th>
+<td>43</td>
+<td>PA</td>
+<td>PENNSYLVANIA</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">43</th>
+<td>44</td>
+<td>PR</td>
+<td>PUERTO RICO</td>
+</tr>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">44</th>
+<td>45</td>
+<td>RI</td>
+<td>RHODE ISLAND</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">45</th>
+<td>46</td>
+<td>SC</td>
+<td>SOUTH CAROLINA</td>
+</tr>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">46</th>
+<td>47</td>
+<td>SD</td>
+<td>SOUTH DAKOTA</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">47</th>
+<td>48</td>
+<td>TN</td>
+<td>TENNESSEE</td>
+</tr>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">48</th>
+<td>49</td>
+<td>TX</td>
+<td>TEXAS</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">49</th>
+<td>50</td>
+<td>VI</td>
+<td>U.S. VIRGIN ISLANDS</td>
+</tr>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">50</th>
+<td>51</td>
+<td>UT</td>
+<td>UTAH</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">51</th>
+<td>52</td>
+<td>VT</td>
+<td>VERMONT</td>
+</tr>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">52</th>
+<td>53</td>
+<td>VA</td>
+<td>VIRGINIA</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">53</th>
+<td>54</td>
+<td>WA</td>
+<td>WASHINGTON</td>
+</tr>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">54</th>
+<td>55</td>
+<td>WV</td>
+<td>WEST VIRGINIA</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">55</th>
+<td>56</td>
+<td>WI</td>
+<td>WISCONSIN</td>
+</tr>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">56</th>
+<td>57</td>
+<td>WY</td>
+<td>WYOMING</td>
+</tr>
+</tbody>
+</table>
+
+</div>
+</div>
+</div>
+</section>
+<section id="creating-an-enhanced-fact-table-with-surrogate-keys" class="level2">
+<h2 class="anchored" data-anchor-id="creating-an-enhanced-fact-table-with-surrogate-keys">Creating an Enhanced Fact Table with Surrogate Keys</h2>
+<p>To improve warehouse normalization and prepare for future multi-dataset integration, I create an enhanced fact table that connects to the state dimension using surrogate keys.</p>
+<div id="d0ab2936" class="cell" data-execution_count="27">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb36"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb36-1"><a href="#cb36-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Merge the existing district school counts fact table with the enhanced state dimension.</span></span>
+<span id="cb36-2"><a href="#cb36-2" aria-hidden="true" tabindex="-1"></a>df_fact_enhanced <span class="op">=</span> fact_district_school_counts.merge(</span>
+<span id="cb36-3"><a href="#cb36-3" aria-hidden="true" tabindex="-1"></a>    df_states_dim[</span>
+<span id="cb36-4"><a href="#cb36-4" aria-hidden="true" tabindex="-1"></a>        [<span class="st">"state_key"</span>, <span class="st">"state_code"</span>]</span>
+<span id="cb36-5"><a href="#cb36-5" aria-hidden="true" tabindex="-1"></a>    ],</span>
+<span id="cb36-6"><a href="#cb36-6" aria-hidden="true" tabindex="-1"></a>    on<span class="op">=</span><span class="st">"state_code"</span>,</span>
+<span id="cb36-7"><a href="#cb36-7" aria-hidden="true" tabindex="-1"></a>    how<span class="op">=</span><span class="st">"left"</span></span>
+<span id="cb36-8"><a href="#cb36-8" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb36-9"><a href="#cb36-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb36-10"><a href="#cb36-10" aria-hidden="true" tabindex="-1"></a><span class="co"># Reorder columns for warehouse modeling.</span></span>
+<span id="cb36-11"><a href="#cb36-11" aria-hidden="true" tabindex="-1"></a>df_fact_enhanced <span class="op">=</span> df_fact_enhanced[</span>
+<span id="cb36-12"><a href="#cb36-12" aria-hidden="true" tabindex="-1"></a>    [</span>
+<span id="cb36-13"><a href="#cb36-13" aria-hidden="true" tabindex="-1"></a>        <span class="st">"district_id"</span>,</span>
+<span id="cb36-14"><a href="#cb36-14" aria-hidden="true" tabindex="-1"></a>        <span class="st">"state_key"</span>,</span>
+<span id="cb36-15"><a href="#cb36-15" aria-hidden="true" tabindex="-1"></a>        <span class="st">"state_code"</span>,</span>
+<span id="cb36-16"><a href="#cb36-16" aria-hidden="true" tabindex="-1"></a>        <span class="st">"operational_school_count"</span></span>
+<span id="cb36-17"><a href="#cb36-17" aria-hidden="true" tabindex="-1"></a>    ]</span>
+<span id="cb36-18"><a href="#cb36-18" aria-hidden="true" tabindex="-1"></a>]</span>
+<span id="cb36-19"><a href="#cb36-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb36-20"><a href="#cb36-20" aria-hidden="true" tabindex="-1"></a><span class="co"># Display the enhanced fact table.</span></span>
+<span id="cb36-21"><a href="#cb36-21" aria-hidden="true" tabindex="-1"></a>df_fact_enhanced.head()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-display" data-execution_count="27">
+<div>
+
+
+<table class="dataframe caption-top table table-sm table-striped small" data-border="1">
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th"></th>
+<th data-quarto-table-cell-role="th">district_id</th>
+<th data-quarto-table-cell-role="th">state_key</th>
+<th data-quarto-table-cell-role="th">state_code</th>
+<th data-quarto-table-cell-role="th">operational_school_count</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">0</th>
+<td>100002</td>
+<td>1</td>
+<td>AL</td>
+<td>0</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">1</th>
+<td>100005</td>
+<td>1</td>
+<td>AL</td>
+<td>7</td>
+</tr>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">2</th>
+<td>100006</td>
+<td>1</td>
+<td>AL</td>
+<td>17</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">3</th>
+<td>100007</td>
+<td>1</td>
+<td>AL</td>
+<td>18</td>
+</tr>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">4</th>
+<td>100008</td>
+<td>1</td>
+<td>AL</td>
+<td>13</td>
+</tr>
+</tbody>
+</table>
+
+</div>
+</div>
+</div>
+</section>
+<section id="loading-the-enhanced-district-school-counts-fact-table-into-postgresql" class="level2">
+<h2 class="anchored" data-anchor-id="loading-the-enhanced-district-school-counts-fact-table-into-postgresql">Loading the Enhanced District School Counts Fact Table into PostgreSQL</h2>
+<p>After adding the state surrogate key to the fact table, I load the enhanced fact table into PostgreSQL for improved warehouse-style analytics.</p>
+<div id="753e873e" class="cell" data-execution_count="28">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb37"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb37-1"><a href="#cb37-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Load the enhanced district school counts fact table into PostgreSQL.</span></span>
+<span id="cb37-2"><a href="#cb37-2" aria-hidden="true" tabindex="-1"></a>df_fact_enhanced.to_sql(</span>
+<span id="cb37-3"><a href="#cb37-3" aria-hidden="true" tabindex="-1"></a>    name<span class="op">=</span><span class="st">"fact_district_school_counts_enhanced"</span>,</span>
+<span id="cb37-4"><a href="#cb37-4" aria-hidden="true" tabindex="-1"></a>    con<span class="op">=</span>engine,</span>
+<span id="cb37-5"><a href="#cb37-5" aria-hidden="true" tabindex="-1"></a>    schema<span class="op">=</span><span class="st">"public"</span>,</span>
+<span id="cb37-6"><a href="#cb37-6" aria-hidden="true" tabindex="-1"></a>    if_exists<span class="op">=</span><span class="st">"replace"</span>,</span>
+<span id="cb37-7"><a href="#cb37-7" aria-hidden="true" tabindex="-1"></a>    index<span class="op">=</span><span class="va">False</span></span>
+<span id="cb37-8"><a href="#cb37-8" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb37-9"><a href="#cb37-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb37-10"><a href="#cb37-10" aria-hidden="true" tabindex="-1"></a><span class="co"># Confirm successful PostgreSQL table creation.</span></span>
+<span id="cb37-11"><a href="#cb37-11" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Enhanced district school counts fact table loaded successfully into PostgreSQL."</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Enhanced district school counts fact table loaded successfully into PostgreSQL.</code></pre>
+</div>
+</div>
+</section>
+<section id="verifying-the-enhanced-fact-table-in-postgresql" class="level2">
+<h2 class="anchored" data-anchor-id="verifying-the-enhanced-fact-table-in-postgresql">Verifying the Enhanced Fact Table in PostgreSQL</h2>
+<p>To confirm the enhanced fact table loaded correctly, I query PostgreSQL and display the warehouse-ready records with surrogate state keys.</p>
+<div id="83715c3c" class="cell" data-execution_count="29">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb39"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb39-1"><a href="#cb39-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Query PostgreSQL to display the enhanced fact table.</span></span>
+<span id="cb39-2"><a href="#cb39-2" aria-hidden="true" tabindex="-1"></a>enhanced_fact_query <span class="op">=</span> <span class="st">"""</span></span>
+<span id="cb39-3"><a href="#cb39-3" aria-hidden="true" tabindex="-1"></a><span class="st">SELECT *</span></span>
+<span id="cb39-4"><a href="#cb39-4" aria-hidden="true" tabindex="-1"></a><span class="st">FROM public.fact_district_school_counts_enhanced</span></span>
+<span id="cb39-5"><a href="#cb39-5" aria-hidden="true" tabindex="-1"></a><span class="st">LIMIT 10;</span></span>
+<span id="cb39-6"><a href="#cb39-6" aria-hidden="true" tabindex="-1"></a><span class="st">"""</span></span>
+<span id="cb39-7"><a href="#cb39-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb39-8"><a href="#cb39-8" aria-hidden="true" tabindex="-1"></a><span class="co"># Display the enhanced PostgreSQL fact table.</span></span>
+<span id="cb39-9"><a href="#cb39-9" aria-hidden="true" tabindex="-1"></a>pd.read_sql(enhanced_fact_query, engine)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-display" data-execution_count="29">
+<div>
+
+
+<table class="dataframe caption-top table table-sm table-striped small" data-border="1">
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th"></th>
+<th data-quarto-table-cell-role="th">district_id</th>
+<th data-quarto-table-cell-role="th">state_key</th>
+<th data-quarto-table-cell-role="th">state_code</th>
+<th data-quarto-table-cell-role="th">operational_school_count</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">0</th>
+<td>100002</td>
+<td>1</td>
+<td>AL</td>
+<td>0</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">1</th>
+<td>100005</td>
+<td>1</td>
+<td>AL</td>
+<td>7</td>
+</tr>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">2</th>
+<td>100006</td>
+<td>1</td>
+<td>AL</td>
+<td>17</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">3</th>
+<td>100007</td>
+<td>1</td>
+<td>AL</td>
+<td>18</td>
+</tr>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">4</th>
+<td>100008</td>
+<td>1</td>
+<td>AL</td>
+<td>13</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">5</th>
+<td>100009</td>
+<td>1</td>
+<td>AL</td>
+<td>5</td>
+</tr>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">6</th>
+<td>100010</td>
+<td>1</td>
+<td>AL</td>
+<td>0</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">7</th>
+<td>100011</td>
+<td>1</td>
+<td>AL</td>
+<td>4</td>
+</tr>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">8</th>
+<td>100012</td>
+<td>1</td>
+<td>AL</td>
+<td>5</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">9</th>
+<td>100013</td>
+<td>1</td>
+<td>AL</td>
+<td>5</td>
+</tr>
+</tbody>
+</table>
+
+</div>
+</div>
+</div>
+</section>
+<section id="analyzing-operational-schools-using-the-enhanced-warehouse-model" class="level2">
+<h2 class="anchored" data-anchor-id="analyzing-operational-schools-using-the-enhanced-warehouse-model">Analyzing Operational Schools Using the Enhanced Warehouse Model</h2>
+<p>To validate the enhanced warehouse model, I run an analytical SQL query using the enhanced fact table and the state dimension table.</p>
+<p>This confirms that the surrogate-key relationship supports state-level aggregation correctly.</p>
+<div id="e869b131" class="cell" data-execution_count="30">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb40"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb40-1"><a href="#cb40-1" aria-hidden="true" tabindex="-1"></a><span class="co"># SQL query using the enhanced fact table and state surrogate key relationship.</span></span>
+<span id="cb40-2"><a href="#cb40-2" aria-hidden="true" tabindex="-1"></a>enhanced_state_analysis_query <span class="op">=</span> <span class="st">"""</span></span>
+<span id="cb40-3"><a href="#cb40-3" aria-hidden="true" tabindex="-1"></a><span class="st">SELECT</span></span>
+<span id="cb40-4"><a href="#cb40-4" aria-hidden="true" tabindex="-1"></a><span class="st">    ds.state_name,</span></span>
+<span id="cb40-5"><a href="#cb40-5" aria-hidden="true" tabindex="-1"></a><span class="st">    SUM(f.operational_school_count) AS total_operational_schools</span></span>
+<span id="cb40-6"><a href="#cb40-6" aria-hidden="true" tabindex="-1"></a><span class="st">FROM public.fact_district_school_counts_enhanced f</span></span>
+<span id="cb40-7"><a href="#cb40-7" aria-hidden="true" tabindex="-1"></a><span class="st">JOIN public.dim_states ds</span></span>
+<span id="cb40-8"><a href="#cb40-8" aria-hidden="true" tabindex="-1"></a><span class="st">    ON f.state_key = ds.state_key</span></span>
+<span id="cb40-9"><a href="#cb40-9" aria-hidden="true" tabindex="-1"></a><span class="st">GROUP BY ds.state_name</span></span>
+<span id="cb40-10"><a href="#cb40-10" aria-hidden="true" tabindex="-1"></a><span class="st">ORDER BY total_operational_schools DESC</span></span>
+<span id="cb40-11"><a href="#cb40-11" aria-hidden="true" tabindex="-1"></a><span class="st">LIMIT 10;</span></span>
+<span id="cb40-12"><a href="#cb40-12" aria-hidden="true" tabindex="-1"></a><span class="st">"""</span></span>
+<span id="cb40-13"><a href="#cb40-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-14"><a href="#cb40-14" aria-hidden="true" tabindex="-1"></a><span class="co"># Display the top states using the enhanced warehouse model.</span></span>
+<span id="cb40-15"><a href="#cb40-15" aria-hidden="true" tabindex="-1"></a>pd.read_sql(enhanced_state_analysis_query, engine)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-display" data-execution_count="30">
+<div>
+
+
+<table class="dataframe caption-top table table-sm table-striped small" data-border="1">
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th"></th>
+<th data-quarto-table-cell-role="th">state_name</th>
+<th data-quarto-table-cell-role="th">total_operational_schools</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">0</th>
+<td>CALIFORNIA</td>
+<td>10303.0</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">1</th>
+<td>TEXAS</td>
+<td>9192.0</td>
+</tr>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">2</th>
+<td>NEW YORK</td>
+<td>4810.0</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">3</th>
+<td>ILLINOIS</td>
+<td>4398.0</td>
+</tr>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">4</th>
+<td>FLORIDA</td>
+<td>4186.0</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">5</th>
+<td>OHIO</td>
+<td>3543.0</td>
+</tr>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">6</th>
+<td>MICHIGAN</td>
+<td>3468.0</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">7</th>
+<td>PENNSYLVANIA</td>
+<td>2932.0</td>
+</tr>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">8</th>
+<td>MINNESOTA</td>
+<td>2741.0</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">9</th>
+<td>NORTH CAROLINA</td>
+<td>2705.0</td>
+</tr>
+</tbody>
+</table>
+
+</div>
+</div>
+</div>
+</section>
+<section id="visualizing-operational-schools-using-the-enhanced-warehouse-model" class="level2">
+<h2 class="anchored" data-anchor-id="visualizing-operational-schools-using-the-enhanced-warehouse-model">Visualizing Operational Schools Using the Enhanced Warehouse Model</h2>
+<p>To make the enhanced warehouse analysis easier to interpret, I create a visualization using the surrogate-key fact table and state dimension relationship.</p>
+<div id="040e0214" class="cell" data-execution_count="31">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb41"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb41-1"><a href="#cb41-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Store the enhanced SQL analysis result in a DataFrame.</span></span>
+<span id="cb41-2"><a href="#cb41-2" aria-hidden="true" tabindex="-1"></a>enhanced_state_analysis_df <span class="op">=</span> pd.read_sql(enhanced_state_analysis_query, engine)</span>
+<span id="cb41-3"><a href="#cb41-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb41-4"><a href="#cb41-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Create a horizontal bar chart.</span></span>
+<span id="cb41-5"><a href="#cb41-5" aria-hidden="true" tabindex="-1"></a>plt.figure(figsize<span class="op">=</span>(<span class="dv">10</span>, <span class="dv">6</span>))</span>
+<span id="cb41-6"><a href="#cb41-6" aria-hidden="true" tabindex="-1"></a>plt.barh(</span>
+<span id="cb41-7"><a href="#cb41-7" aria-hidden="true" tabindex="-1"></a>    enhanced_state_analysis_df[<span class="st">"state_name"</span>],</span>
+<span id="cb41-8"><a href="#cb41-8" aria-hidden="true" tabindex="-1"></a>    enhanced_state_analysis_df[<span class="st">"total_operational_schools"</span>]</span>
+<span id="cb41-9"><a href="#cb41-9" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb41-10"><a href="#cb41-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb41-11"><a href="#cb41-11" aria-hidden="true" tabindex="-1"></a><span class="co"># Display the highest values at the top.</span></span>
+<span id="cb41-12"><a href="#cb41-12" aria-hidden="true" tabindex="-1"></a>plt.gca().invert_yaxis()</span>
+<span id="cb41-13"><a href="#cb41-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb41-14"><a href="#cb41-14" aria-hidden="true" tabindex="-1"></a><span class="co"># Add chart labels and title.</span></span>
+<span id="cb41-15"><a href="#cb41-15" aria-hidden="true" tabindex="-1"></a>plt.title(<span class="st">"Top 10 States by Operational Schools - Enhanced Warehouse Model"</span>)</span>
+<span id="cb41-16"><a href="#cb41-16" aria-hidden="true" tabindex="-1"></a>plt.xlabel(<span class="st">"Total Operational Schools"</span>)</span>
+<span id="cb41-17"><a href="#cb41-17" aria-hidden="true" tabindex="-1"></a>plt.ylabel(<span class="st">"State"</span>)</span>
+<span id="cb41-18"><a href="#cb41-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb41-19"><a href="#cb41-19" aria-hidden="true" tabindex="-1"></a><span class="co"># Improve chart spacing.</span></span>
+<span id="cb41-20"><a href="#cb41-20" aria-hidden="true" tabindex="-1"></a>plt.tight_layout()</span>
+<span id="cb41-21"><a href="#cb41-21" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb41-22"><a href="#cb41-22" aria-hidden="true" tabindex="-1"></a><span class="co"># Display the visualization.</span></span>
+<span id="cb41-23"><a href="#cb41-23" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="education_tech_impact_pipeline_files/figure-html/cell-32-output-1.png" width="951" height="566" class="figure-img"></p>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="designing-a-future-educational-metrics-fact-table" class="level2">
+<h2 class="anchored" data-anchor-id="designing-a-future-educational-metrics-fact-table">Designing a Future Educational Metrics Fact Table</h2>
+<p>To prepare for future NAEP and CRDC integration, I design a reusable educational metrics fact table structure.</p>
+<p>This future warehouse table will support educational outcome analysis across districts, states, and reporting years.</p>
+<div id="24d37abc" class="cell" data-execution_count="32">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb42"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb42-1"><a href="#cb42-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Create an empty educational metrics fact table structure.</span></span>
+<span id="cb42-2"><a href="#cb42-2" aria-hidden="true" tabindex="-1"></a>df_educational_metrics_fact <span class="op">=</span> pd.DataFrame({</span>
+<span id="cb42-3"><a href="#cb42-3" aria-hidden="true" tabindex="-1"></a>    <span class="st">"district_id"</span>: pd.Series(dtype<span class="op">=</span><span class="st">"object"</span>),</span>
+<span id="cb42-4"><a href="#cb42-4" aria-hidden="true" tabindex="-1"></a>    <span class="st">"state_key"</span>: pd.Series(dtype<span class="op">=</span><span class="st">"int"</span>),</span>
+<span id="cb42-5"><a href="#cb42-5" aria-hidden="true" tabindex="-1"></a>    <span class="st">"year_key"</span>: pd.Series(dtype<span class="op">=</span><span class="st">"int"</span>),</span>
+<span id="cb42-6"><a href="#cb42-6" aria-hidden="true" tabindex="-1"></a>    <span class="st">"metric_name"</span>: pd.Series(dtype<span class="op">=</span><span class="st">"object"</span>),</span>
+<span id="cb42-7"><a href="#cb42-7" aria-hidden="true" tabindex="-1"></a>    <span class="st">"metric_value"</span>: pd.Series(dtype<span class="op">=</span><span class="st">"float"</span>)</span>
+<span id="cb42-8"><a href="#cb42-8" aria-hidden="true" tabindex="-1"></a>})</span>
+<span id="cb42-9"><a href="#cb42-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb42-10"><a href="#cb42-10" aria-hidden="true" tabindex="-1"></a><span class="co"># Display the warehouse-ready fact table structure.</span></span>
+<span id="cb42-11"><a href="#cb42-11" aria-hidden="true" tabindex="-1"></a>df_educational_metrics_fact</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-display" data-execution_count="32">
+<div>
+
+
+<table class="dataframe caption-top table table-sm table-striped small" data-border="1">
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th"></th>
+<th data-quarto-table-cell-role="th">district_id</th>
+<th data-quarto-table-cell-role="th">state_key</th>
+<th data-quarto-table-cell-role="th">year_key</th>
+<th data-quarto-table-cell-role="th">metric_name</th>
+<th data-quarto-table-cell-role="th">metric_value</th>
+</tr>
+</thead>
+<tbody>
+</tbody>
+</table>
+
+</div>
+</div>
+</div>
+</section>
+<section id="future-educational-analytics-warehouse-roadmap" class="level2">
+<h2 class="anchored" data-anchor-id="future-educational-analytics-warehouse-roadmap">Future Educational Analytics Warehouse Roadmap</h2>
+<p>The long-term goal of this project is to build a multi-source educational analytics warehouse capable of analyzing relationships between technology adoption and educational outcomes across U.S. public schools.</p>
+<section id="planned-future-data-sources" class="level3">
+<h3 class="anchored" data-anchor-id="planned-future-data-sources">Planned Future Data Sources</h3>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th>Dataset</th>
+<th>Purpose</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>CCD (Common Core of Data)</td>
+<td>District and school operational data</td>
+</tr>
+<tr class="even">
+<td>NAEP</td>
+<td>Academic performance and assessment metrics</td>
+</tr>
+<tr class="odd">
+<td>CRDC</td>
+<td>Technology access and digital equity indicators</td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="planned-future-analytical-capabilities" class="level3">
+<h3 class="anchored" data-anchor-id="planned-future-analytical-capabilities">Planned Future Analytical Capabilities</h3>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 50%">
+<col style="width: 50%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Capability</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Longitudinal Analysis</td>
+<td>Multi-year educational trend analysis</td>
+</tr>
+<tr class="even">
+<td>State Comparisons</td>
+<td>Cross-state educational benchmarking</td>
+</tr>
+<tr class="odd">
+<td>Technology Impact Analysis</td>
+<td>Relationship between technology access and student outcomes</td>
+</tr>
+<tr class="even">
+<td>Dashboard Reporting</td>
+<td>Interactive business intelligence reporting</td>
+</tr>
+<tr class="odd">
+<td>Statistical Modeling</td>
+<td>Correlation and regression analysis</td>
+</tr>
+</tbody>
+</table>
+<p>This warehouse foundation will support future educational research, analytics engineering workflows, and large-scale public education analysis.</p>
+</section>
 </section>
 
 </main>
