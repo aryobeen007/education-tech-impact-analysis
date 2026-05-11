@@ -483,3 +483,66 @@ Future phases of the project will expand the analysis by integrating additional 
 
 The long-term goal of this project is to evaluate whether increased technology adoption in public schools is associated with measurable differences in educational outcomes across states and districts.
 
+## Current PostgreSQL Warehouse Schema
+
+At this stage of the project, the PostgreSQL warehouse contains two dimension tables and one analytical fact table.
+
+### Dimension Tables
+
+| Table Name | Description |
+|---|---|
+| dim_districts | Stores district-level identification and geographic information |
+| dim_states | Stores one unique record per state |
+
+### Fact Tables
+
+| Table Name | Description |
+|---|---|
+| fact_district_school_counts | Stores operational school counts by district and state |
+
+This dimensional structure provides the foundation for future educational analytics, state comparisons, trend analysis, and dashboard reporting.
+```
+
+## Data Model Relationships
+
+The current warehouse model uses a simple dimensional structure.
+
+The district-level fact table connects to the district and state dimensions through shared identifiers.
+
+| Fact Table | Related Dimension | Join Key |
+|---|---|---|
+| fact_district_school_counts | dim_districts | district_id |
+| fact_district_school_counts | dim_states | state_code |
+
+This structure allows me to analyze school counts at both the district and state levels while keeping descriptive attributes organized in dimension tables.
+
+## Data Quality Validation Checks
+
+Before using the warehouse tables for analysis, I perform several basic data quality checks to validate the integrity of the transformed data.
+
+```{python}
+# Count missing district identifiers.
+missing_district_ids = df_district_dim["district_id"].isnull().sum()
+
+# Count missing state codes.
+missing_state_codes = df_district_dim["state_code"].isnull().sum()
+
+# Count duplicate district identifiers.
+duplicate_district_ids = df_district_dim["district_id"].duplicated().sum()
+
+# Display validation results.
+validation_results = pd.DataFrame({
+    "validation_check": [
+        "Missing district IDs",
+        "Missing state codes",
+        "Duplicate district IDs"
+    ],
+    "result": [
+        missing_district_ids,
+        missing_state_codes,
+        duplicate_district_ids
+    ]
+})
+
+validation_results
+```
