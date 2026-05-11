@@ -501,7 +501,6 @@ At this stage of the project, the PostgreSQL warehouse contains two dimension ta
 | fact_district_school_counts | Stores operational school counts by district and state |
 
 This dimensional structure provides the foundation for future educational analytics, state comparisons, trend analysis, and dashboard reporting.
-```
 
 ## Data Model Relationships
 
@@ -546,3 +545,33 @@ validation_results = pd.DataFrame({
 
 validation_results
 ```
+
+## Creating the Year Dimension Table
+
+To support future longitudinal and multi-year analysis, I create a year dimension table.
+
+This table will eventually connect CCD, NAEP, and CRDC datasets across multiple reporting years.
+
+```{python}
+# Define the reporting years planned for the project.
+analysis_years = [
+    2009,
+    2011,
+    2013,
+    2015,
+    2017,
+    2019,
+    2022,
+    2024
+]
+
+# Create the year dimension table.
+df_year_dim = pd.DataFrame({
+    "year_key": range(1, len(analysis_years) + 1),
+    "reporting_year": analysis_years
+})
+
+# Display the year dimension table.
+df_year_dim
+```
+
