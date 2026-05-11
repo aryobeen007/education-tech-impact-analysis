@@ -1,0 +1,263 @@
+---
+title: "Education Technology Impact Analysis"
+author: "Naseer Aryobee"
+jupyter: python3
+format: html
+execute:
+  echo: true
+---
+
+```{python}
+import os
+import pandas as pd
+import psycopg2
+from dotenv import load_dotenv, find_dotenv
+from sqlalchemy import create_engine
+from sqlalchemy.engine import URL
+
+# Locate and load the local .env file.
+# This keeps sensitive PostgreSQL credentials out of the source code,
+# GitHub repository, and rendered HTML report.
+env_path = find_dotenv(usecwd=True)
+load_dotenv(env_path)
+
+# Read PostgreSQL connection settings from secured environment variables.
+DB_USER = os.getenv("DB_USER")
+DB_PASSWORD = os.getenv("DB_PASSWORD")
+DB_HOST = os.getenv("DB_HOST")
+DB_PORT = os.getenv("DB_PORT")
+DB_NAME = os.getenv("DB_NAME")
+
+# Validate that all required PostgreSQL environment variables are available.
+required_variables = {
+    "DB_USER": DB_USER,
+    "DB_PASSWORD": DB_PASSWORD,
+    "DB_HOST": DB_HOST,
+    "DB_PORT": DB_PORT,
+    "DB_NAME": DB_NAME
+}
+
+missing_variables = [
+    variable_name
+    for variable_name, variable_value in required_variables.items()
+    if variable_value is None or variable_value == ""
+]
+
+if missing_variables:
+    raise ValueError(f"Missing required environment variables: {missing_variables}")
+
+# Build the PostgreSQL connection safely.
+# URL.create prevents special characters in the password from breaking the connection string.
+database_url = URL.create(
+    drivername="postgresql+psycopg2",
+    username=DB_USER,
+    password=DB_PASSWORD,
+    host=DB_HOST,
+    port=int(DB_PORT),
+    database=DB_NAME
+)
+
+# Create the SQLAlchemy engine used for pandas and PostgreSQL loading.
+engine = create_engine(database_url)
+
+# Establish a direct PostgreSQL connection test using psycopg2.
+conn = psycopg2.connect(
+    host=DB_HOST,
+    port=DB_PORT,
+    database=DB_NAME,
+    user=DB_USER,
+    password=DB_PASSWORD
+)
+
+print("PostgreSQL connection established successfully.")
+```
+
+## Data Extraction — CCD Dataset
+
+In this step, I load the Common Core of Data (CCD) dataset into Python for initial inspection and preprocessing.
+
+This dataset contains district-level information including enrollment, number of schools, and geographic details.
+
+I use pandas to read the CSV file and examine its structure before loading it into PostgreSQL.
+
+```{python}
+# Define the relative path to the CCD dataset.
+# The raw data is stored locally and excluded from GitHub using .gitignore.
+file_path = "../data/raw/ccd/ccd_lea_2024.csv"
+
+# Load the CCD CSV file into a pandas DataFrame.
+# This allows me to inspect the dataset before database loading.
+df_ccd = pd.read_csv(file_path)
+
+# Display the first five records to confirm the file loaded correctly.
+df_ccd.head()
+```
+
+## Initial Data Inspection — CCD Dataset
+
+In this step, I inspect the CCD dataset to understand its size, structure, and key columns before performing any cleaning or transformation.
+
+This inspection helps confirm that the data loaded correctly and provides an initial understanding of the fields available for analysis.
+
+```{python}
+# Display the number of rows and columns in the CCD dataset.
+# This gives me a quick overview of the dataset size before cleaning.
+row_count, column_count = df_ccd.shape
+
+print(f"Number of rows: {row_count}")
+print(f"Number of columns: {column_count}")
+
+# Display all column names so I can identify fields needed for the district dimension table.
+df_ccd.columns.tolist()
+```
+
+## Selecting District-Level Columns
+
+In this step, I identify the key district-level fields that will be used to build the district dimension table in PostgreSQL.
+
+The CCD dataset contains many administrative and metadata fields. For the initial data model, I focus on the core district identification and geographic columns needed for analysis.
+
+```{python}
+# Select district-related columns needed for the dimension table.
+district_columns = [
+    "LEAID",
+    "LEA_NAME",
+    "ST",
+    "STATENAME",
+    "MCITY",
+    "WEBSITE",
+    "OPERATIONAL_SCHOOLS"
+]
+
+# Create a smaller district-focused DataFrame.
+df_districts = df_ccd[district_columns]
+
+# Display the first five district records.
+df_districts.head()
+```
+
+## Cleaning the District Dimension Dataset
+
+Before loading the district data into PostgreSQL, I clean the dataset to remove duplicate districts and standardize the column structure.
+
+This step helps ensure the dimension table contains one unique record per school district.
+
+```{python}
+# Create a copy of the district DataFrame to preserve the original dataset.
+df_district_dim = df_districts.copy()
+
+# Remove duplicate district records using the LEAID identifier.
+df_district_dim = df_district_dim.drop_duplicates(subset=["LEAID"])
+
+# Standardize column names for PostgreSQL compatibility.
+df_district_dim.columns = [
+    "district_id",
+    "district_name",
+    "state_code",
+    "state_name",
+    "city",
+    "website",
+    "operational_schools"
+]
+
+# Reset the index after cleaning so the DataFrame has a clean sequence.
+df_district_dim = df_district_dim.reset_index(drop=True)
+
+# Display the cleaned district dimension dataset.
+df_district_dim.head()
+```
+
+## Loading the District Dimension Table into PostgreSQL
+
+After cleaning the district dataset, I load the data into PostgreSQL as a dimension table.
+
+This step creates the foundation for future analytics and fact tables that will be connected through district identifiers.
+
+```{python}
+# Load the cleaned district dimension dataset into PostgreSQL.
+# if_exists="replace" allows this workflow to be rerun during development
+# without creating duplicate tables or duplicate records.
+df_district_dim.to_sql(
+    name="dim_districts",
+    con=engine,
+    schema="public",
+    if_exists="replace",
+    index=False
+)
+
+# Confirm successful PostgreSQL table creation.
+print("District dimension table loaded successfully into PostgreSQL.")
+```
+
+## Verifying the PostgreSQL Target Database
+
+Before continuing, I verify which PostgreSQL database the workflow is connected to and confirm where the table was created.
+
+```{python}
+# Query PostgreSQL to confirm the active database, schema, and user.
+connection_check_query = """
+SELECT
+    current_database() AS active_database,
+    current_schema() AS active_schema,
+    current_user AS active_user;
+"""
+
+# Display the PostgreSQL connection details.
+pd.read_sql(connection_check_query, engine)
+```
+
+## Verifying the District Dimension Table in PostgreSQL
+
+After loading the district dimension table, I verify that the table exists inside PostgreSQL.
+
+```{python}
+# Query PostgreSQL to confirm the dimension table exists.
+table_check_query = """
+SELECT
+    table_schema,
+    table_name
+FROM information_schema.tables
+WHERE table_schema = 'public'
+  AND table_name = 'dim_districts';
+"""
+
+# Display matching PostgreSQL tables.
+pd.read_sql(table_check_query, engine)
+```
+
+## Counting Records in the District Dimension Table
+
+To confirm the table was loaded correctly, I query PostgreSQL and count the total number of district records stored in the dimension table.
+
+```{python}
+# Count records inside the PostgreSQL dimension table.
+district_count_query = """
+SELECT COUNT(*) AS total_district_records
+FROM public.dim_districts;
+"""
+
+# Display the total number of district records.
+pd.read_sql(district_count_query, engine)
+```
+
+## Previewing Records from the District Dimension Table
+
+As a final validation step, I preview the first few records directly from the PostgreSQL table.
+
+```{python}
+# Preview records directly from the PostgreSQL dimension table.
+district_preview_query = """
+SELECT
+    district_id,
+    district_name,
+    state_code,
+    state_name,
+    city,
+    operational_schools
+FROM public.dim_districts
+LIMIT 5;
+"""
+
+# Display the first five records from PostgreSQL.
+pd.read_sql(district_preview_query, engine)
+```
