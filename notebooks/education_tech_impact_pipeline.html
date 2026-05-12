@@ -111,7 +111,104 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </header>
 
 
-<div id="97e332f6" class="cell" data-execution_count="1">
+<section id="project-overview" class="level2">
+<h2 class="anchored" data-anchor-id="project-overview">Project Overview</h2>
+<p>This project analyzes how education technology adoption may relate to public school performance across the United States.</p>
+<p>The goal of this project is to build a portfolio-grade data engineering and analytics workflow that extracts, cleans, transforms, loads, and analyzes education-related datasets using Python, PostgreSQL, SQL, and Quarto.</p>
+<p>I use this workflow to develop a reproducible analytics pipeline that can support long-term research into whether access to technology in schools is associated with measurable differences in educational outcomes.</p>
+</section>
+<section id="project-objectives" class="level2">
+<h2 class="anchored" data-anchor-id="project-objectives">Project Objectives</h2>
+<p>The main objectives of this project are to:</p>
+<ul>
+<li>Extract raw public education datasets from national sources</li>
+<li>Clean and standardize inconsistent government data files</li>
+<li>Build a PostgreSQL analytical warehouse using fact and dimension tables</li>
+<li>Connect district, state, year, and educational outcome data through a dimensional model</li>
+<li>Perform SQL-based analysis directly against PostgreSQL</li>
+<li>Create visualizations and reporting outputs inside a reproducible Quarto HTML report</li>
+<li>Prepare the project for future technology adoption and academic performance correlation analysis</li>
+</ul>
+</section>
+<section id="data-sources" class="level2">
+<h2 class="anchored" data-anchor-id="data-sources">Data Sources</h2>
+<p>This project uses publicly available education datasets, including:</p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 50%">
+<col style="width: 50%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Dataset</th>
+<th>Source Purpose</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>CCD Common Core of Data</td>
+<td>District and school operational information</td>
+</tr>
+<tr class="even">
+<td>NAEP National Assessment of Educational Progress</td>
+<td>State-level academic performance outcomes</td>
+</tr>
+<tr class="odd">
+<td>CRDC Civil Rights Data Collection</td>
+<td>Future technology access and digital equity indicators</td>
+</tr>
+</tbody>
+</table>
+<p>The current phase of the project uses CCD district data and NAEP Grade 8 mathematics performance data. Future phases will integrate CRDC technology access metrics to support deeper analysis of educational technology impact.</p>
+</section>
+<section id="tools-and-technologies" class="level2">
+<h2 class="anchored" data-anchor-id="tools-and-technologies">Tools and Technologies</h2>
+<p>This project uses:</p>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th>Tool</th>
+<th>Purpose</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Python</td>
+<td>Data extraction, cleaning, transformation, and validation</td>
+</tr>
+<tr class="even">
+<td>pandas</td>
+<td>Data manipulation and profiling</td>
+</tr>
+<tr class="odd">
+<td>PostgreSQL</td>
+<td>Analytical warehouse storage</td>
+</tr>
+<tr class="even">
+<td>SQL</td>
+<td>Warehouse querying and analysis</td>
+</tr>
+<tr class="odd">
+<td>Quarto</td>
+<td>Reproducible HTML reporting</td>
+</tr>
+<tr class="even">
+<td>matplotlib</td>
+<td>Data visualization</td>
+</tr>
+<tr class="odd">
+<td>GitHub</td>
+<td>Version control and portfolio documentation</td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="research-direction" class="level2">
+<h2 class="anchored" data-anchor-id="research-direction">Research Direction</h2>
+<p>The long-term research question behind this project is:</p>
+<p><strong>Does increased access to technology in public schools appear to be associated with measurable differences in academic performance across states, districts, and reporting years?</strong></p>
+<p>This first phase builds the warehouse and analytics foundation. Later phases will integrate additional education technology indicators and perform deeper longitudinal and statistical analysis.</p>
+<div id="6fa1309c" class="cell" data-execution_count="1">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> os</span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> psycopg2</span>
@@ -178,12 +275,13 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <pre><code>PostgreSQL connection established successfully.</code></pre>
 </div>
 </div>
+</section>
 <section id="data-extraction-ccd-dataset" class="level2">
 <h2 class="anchored" data-anchor-id="data-extraction-ccd-dataset">Data Extraction — CCD Dataset</h2>
 <p>In this step, I load the Common Core of Data (CCD) dataset into Python for initial inspection and preprocessing.</p>
 <p>This dataset contains district-level information including enrollment, number of schools, and geographic details.</p>
 <p>I use pandas to read the CSV file and examine its structure before loading it into PostgreSQL.</p>
-<div id="34fac7c7" class="cell" data-execution_count="2">
+<div id="51d576bf" class="cell" data-execution_count="2">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Define the relative path to the CCD dataset.</span></span>
 <span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="co"># The raw data is stored locally and excluded from GitHub using .gitignore.</span></span>
 <span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>file_path <span class="op">=</span> <span class="st">"../data/raw/ccd/ccd_lea_2024.csv"</span></span>
@@ -195,10 +293,10 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a><span class="co"># Display the first five records to confirm the file loaded correctly.</span></span>
 <span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a>df_ccd.head()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stderr">
-<pre><code>C:\Users\User\AppData\Local\Temp\ipykernel_23428\1148928295.py:7: DtypeWarning: Columns (0: MSTREET3) have mixed types. Specify dtype option on import or set low_memory=False.
+<pre><code>C:\Users\User\AppData\Local\Temp\ipykernel_15860\1148928295.py:7: DtypeWarning: Columns (0: MSTREET3) have mixed types. Specify dtype option on import or set low_memory=False.
   df_ccd = pd.read_csv(file_path)</code></pre>
 </div>
-<div class="cell-output cell-output-display" data-execution_count="2">
+<div class="cell-output cell-output-display" data-execution_count="587">
 <div>
 
 
@@ -362,7 +460,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <h2 class="anchored" data-anchor-id="initial-data-inspection-ccd-dataset">Initial Data Inspection — CCD Dataset</h2>
 <p>In this step, I inspect the CCD dataset to understand its size, structure, and key columns before performing any cleaning or transformation.</p>
 <p>This inspection helps confirm that the data loaded correctly and provides an initial understanding of the fields available for analysis.</p>
-<div id="f031efb6" class="cell" data-execution_count="3">
+<div id="659c3c86" class="cell" data-execution_count="3">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Display the number of rows and columns in the CCD dataset.</span></span>
 <span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="co"># This gives me a quick overview of the dataset size before cleaning.</span></span>
 <span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>row_count, column_count <span class="op">=</span> df_ccd.shape</span>
@@ -376,7 +474,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <pre><code>Number of rows: 19630
 Number of columns: 58</code></pre>
 </div>
-<div class="cell-output cell-output-display" data-execution_count="3">
+<div class="cell-output cell-output-display" data-execution_count="588">
 <pre><code>['SCHOOL_YEAR',
  'FIPST',
  'STATENAME',
@@ -442,7 +540,7 @@ Number of columns: 58</code></pre>
 <h2 class="anchored" data-anchor-id="selecting-district-level-columns">Selecting District-Level Columns</h2>
 <p>In this step, I identify the key district-level fields that will be used to build the district dimension table in PostgreSQL.</p>
 <p>The CCD dataset contains many administrative and metadata fields. For the initial data model, I focus on the core district identification and geographic columns needed for analysis.</p>
-<div id="79f93dda" class="cell" data-execution_count="4">
+<div id="8f5f723c" class="cell" data-execution_count="4">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Select district-related columns needed for the dimension table.</span></span>
 <span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>district_columns <span class="op">=</span> [</span>
 <span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>    <span class="st">"LEAID"</span>,</span>
@@ -459,7 +557,7 @@ Number of columns: 58</code></pre>
 <span id="cb8-14"><a href="#cb8-14" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb8-15"><a href="#cb8-15" aria-hidden="true" tabindex="-1"></a><span class="co"># Display the first five district records.</span></span>
 <span id="cb8-16"><a href="#cb8-16" aria-hidden="true" tabindex="-1"></a>df_districts.head()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-display" data-execution_count="4">
+<div class="cell-output cell-output-display" data-execution_count="589">
 <div>
 
 
@@ -538,7 +636,7 @@ Number of columns: 58</code></pre>
 <h2 class="anchored" data-anchor-id="cleaning-the-district-dimension-dataset">Cleaning the District Dimension Dataset</h2>
 <p>Before loading the district data into PostgreSQL, I clean the dataset to remove duplicate districts and standardize the column structure.</p>
 <p>This step helps ensure the dimension table contains one unique record per school district.</p>
-<div id="a45fe745" class="cell" data-execution_count="5">
+<div id="c2de100d" class="cell" data-execution_count="5">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Create a copy of the district DataFrame to preserve the original dataset.</span></span>
 <span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>df_district_dim <span class="op">=</span> df_districts.copy()</span>
 <span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a></span>
@@ -561,7 +659,7 @@ Number of columns: 58</code></pre>
 <span id="cb9-20"><a href="#cb9-20" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb9-21"><a href="#cb9-21" aria-hidden="true" tabindex="-1"></a><span class="co"># Display the cleaned district dimension dataset.</span></span>
 <span id="cb9-22"><a href="#cb9-22" aria-hidden="true" tabindex="-1"></a>df_district_dim.head()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-display" data-execution_count="5">
+<div class="cell-output cell-output-display" data-execution_count="590">
 <div>
 
 
@@ -640,7 +738,7 @@ Number of columns: 58</code></pre>
 <h2 class="anchored" data-anchor-id="loading-the-district-dimension-table-into-postgresql">Loading the District Dimension Table into PostgreSQL</h2>
 <p>After cleaning the district dataset, I load the data into PostgreSQL as a dimension table.</p>
 <p>This step creates the foundation for future analytics and fact tables that will be connected through district identifiers.</p>
-<div id="f0791c46" class="cell" data-execution_count="6">
+<div id="3ea763d8" class="cell" data-execution_count="6">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb10"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Load the cleaned district dimension dataset into PostgreSQL.</span></span>
 <span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a><span class="co"># if_exists="replace" allows this workflow to be rerun during development</span></span>
 <span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a><span class="co"># without creating duplicate tables or duplicate records.</span></span>
@@ -662,7 +760,7 @@ Number of columns: 58</code></pre>
 <section id="verifying-the-postgresql-target-database" class="level2">
 <h2 class="anchored" data-anchor-id="verifying-the-postgresql-target-database">Verifying the PostgreSQL Target Database</h2>
 <p>Before continuing, I verify which PostgreSQL database the workflow is connected to and confirm where the table was created.</p>
-<div id="f2f6e91b" class="cell" data-execution_count="7">
+<div id="7d1f1fd6" class="cell" data-execution_count="7">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb12"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Query PostgreSQL to confirm the active database, schema, and user.</span></span>
 <span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>connection_check_query <span class="op">=</span> <span class="st">"""</span></span>
 <span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a><span class="st">SELECT</span></span>
@@ -673,7 +771,7 @@ Number of columns: 58</code></pre>
 <span id="cb12-8"><a href="#cb12-8" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb12-9"><a href="#cb12-9" aria-hidden="true" tabindex="-1"></a><span class="co"># Display the PostgreSQL connection details.</span></span>
 <span id="cb12-10"><a href="#cb12-10" aria-hidden="true" tabindex="-1"></a>pd.read_sql(connection_check_query, engine)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-display" data-execution_count="7">
+<div class="cell-output cell-output-display" data-execution_count="592">
 <div>
 
 
@@ -703,7 +801,7 @@ Number of columns: 58</code></pre>
 <section id="verifying-the-district-dimension-table-in-postgresql" class="level2">
 <h2 class="anchored" data-anchor-id="verifying-the-district-dimension-table-in-postgresql">Verifying the District Dimension Table in PostgreSQL</h2>
 <p>After loading the district dimension table, I verify that the table exists inside PostgreSQL.</p>
-<div id="c6129e50" class="cell" data-execution_count="8">
+<div id="2bcbe69f" class="cell" data-execution_count="8">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb13"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Query PostgreSQL to confirm the dimension table exists.</span></span>
 <span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>table_check_query <span class="op">=</span> <span class="st">"""</span></span>
 <span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a><span class="st">SELECT</span></span>
@@ -716,7 +814,7 @@ Number of columns: 58</code></pre>
 <span id="cb13-10"><a href="#cb13-10" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb13-11"><a href="#cb13-11" aria-hidden="true" tabindex="-1"></a><span class="co"># Display matching PostgreSQL tables.</span></span>
 <span id="cb13-12"><a href="#cb13-12" aria-hidden="true" tabindex="-1"></a>pd.read_sql(table_check_query, engine)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-display" data-execution_count="8">
+<div class="cell-output cell-output-display" data-execution_count="593">
 <div>
 
 
@@ -744,7 +842,7 @@ Number of columns: 58</code></pre>
 <section id="counting-records-in-the-district-dimension-table" class="level2">
 <h2 class="anchored" data-anchor-id="counting-records-in-the-district-dimension-table">Counting Records in the District Dimension Table</h2>
 <p>To confirm the table was loaded correctly, I query PostgreSQL and count the total number of district records stored in the dimension table.</p>
-<div id="1ab5b813" class="cell" data-execution_count="9">
+<div id="b008530a" class="cell" data-execution_count="9">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb14"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Count records inside the PostgreSQL dimension table.</span></span>
 <span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>district_count_query <span class="op">=</span> <span class="st">"""</span></span>
 <span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a><span class="st">SELECT COUNT(*) AS total_district_records</span></span>
@@ -753,7 +851,7 @@ Number of columns: 58</code></pre>
 <span id="cb14-6"><a href="#cb14-6" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb14-7"><a href="#cb14-7" aria-hidden="true" tabindex="-1"></a><span class="co"># Display the total number of district records.</span></span>
 <span id="cb14-8"><a href="#cb14-8" aria-hidden="true" tabindex="-1"></a>pd.read_sql(district_count_query, engine)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-display" data-execution_count="9">
+<div class="cell-output cell-output-display" data-execution_count="594">
 <div>
 
 
@@ -779,7 +877,7 @@ Number of columns: 58</code></pre>
 <section id="previewing-records-from-the-district-dimension-table" class="level2">
 <h2 class="anchored" data-anchor-id="previewing-records-from-the-district-dimension-table">Previewing Records from the District Dimension Table</h2>
 <p>As a final validation step, I preview the first few records directly from the PostgreSQL table.</p>
-<div id="126b9dc7" class="cell" data-execution_count="10">
+<div id="a4924b5b" class="cell" data-execution_count="10">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb15"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Preview records directly from the PostgreSQL dimension table.</span></span>
 <span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>district_preview_query <span class="op">=</span> <span class="st">"""</span></span>
 <span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a><span class="st">SELECT</span></span>
@@ -795,7 +893,7 @@ Number of columns: 58</code></pre>
 <span id="cb15-13"><a href="#cb15-13" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb15-14"><a href="#cb15-14" aria-hidden="true" tabindex="-1"></a><span class="co"># Display the first five records from PostgreSQL.</span></span>
 <span id="cb15-15"><a href="#cb15-15" aria-hidden="true" tabindex="-1"></a>pd.read_sql(district_preview_query, engine)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-display" data-execution_count="10">
+<div class="cell-output cell-output-display" data-execution_count="595">
 <div>
 
 
@@ -868,7 +966,7 @@ Number of columns: 58</code></pre>
 <h2 class="anchored" data-anchor-id="creating-the-state-dimension-table">Creating the State Dimension Table</h2>
 <p>To support state-level analysis, I create a separate state dimension table from the cleaned district dataset.</p>
 <p>This table stores one unique record per state and allows future fact tables to connect district-level data to state-level summaries.</p>
-<div id="89f1c073" class="cell" data-execution_count="11">
+<div id="c44bfd30" class="cell" data-execution_count="11">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb16"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Create the state dimension table from the cleaned district dataset.</span></span>
 <span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>df_state_dim <span class="op">=</span> (</span>
 <span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a>    df_district_dim[[<span class="st">"state_code"</span>, <span class="st">"state_name"</span>]]</span>
@@ -882,7 +980,7 @@ Number of columns: 58</code></pre>
 <span id="cb16-11"><a href="#cb16-11" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb16-12"><a href="#cb16-12" aria-hidden="true" tabindex="-1"></a><span class="co"># Display the state dimension table.</span></span>
 <span id="cb16-13"><a href="#cb16-13" aria-hidden="true" tabindex="-1"></a>df_state_dim.head()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-display" data-execution_count="11">
+<div class="cell-output cell-output-display" data-execution_count="596">
 <div>
 
 
@@ -936,7 +1034,7 @@ Number of columns: 58</code></pre>
 <section id="loading-the-state-dimension-table-into-postgresql" class="level2">
 <h2 class="anchored" data-anchor-id="loading-the-state-dimension-table-into-postgresql">Loading the State Dimension Table into PostgreSQL</h2>
 <p>After creating the state dimension dataset, I load the table into PostgreSQL for future state-level analytics and reporting.</p>
-<div id="c1fceb6d" class="cell" data-execution_count="12">
+<div id="72717128" class="cell" data-execution_count="12">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb17"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Load the state dimension table into PostgreSQL.</span></span>
 <span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a>df_state_dim.to_sql(</span>
 <span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a>    name<span class="op">=</span><span class="st">"dim_states"</span>,</span>
@@ -956,14 +1054,14 @@ Number of columns: 58</code></pre>
 <section id="verifying-the-state-dimension-table-in-postgresql" class="level2">
 <h2 class="anchored" data-anchor-id="verifying-the-state-dimension-table-in-postgresql">Verifying the State Dimension Table in PostgreSQL</h2>
 <p>To confirm the state dimension table loaded successfully, I query PostgreSQL and count the total number of state records.</p>
-<div id="da231fa3" class="cell" data-execution_count="13">
+<div id="9bb6b15a" class="cell" data-execution_count="13">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb19"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a>state_count_query <span class="op">=</span> <span class="st">"""</span></span>
 <span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a><span class="st">SELECT COUNT(*) AS total_state_records</span></span>
 <span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a><span class="st">FROM public.dim_states;</span></span>
 <span id="cb19-4"><a href="#cb19-4" aria-hidden="true" tabindex="-1"></a><span class="st">"""</span></span>
 <span id="cb19-5"><a href="#cb19-5" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb19-6"><a href="#cb19-6" aria-hidden="true" tabindex="-1"></a>pd.read_sql(state_count_query, engine)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-display" data-execution_count="13">
+<div class="cell-output cell-output-display" data-execution_count="598">
 <div>
 
 
@@ -990,7 +1088,7 @@ Number of columns: 58</code></pre>
 <h2 class="anchored" data-anchor-id="creating-the-district-school-counts-fact-table">Creating the District School Counts Fact Table</h2>
 <p>To support analytical reporting, I create the first fact table using district-level school count data.</p>
 <p>This table connects each district to its state and stores the number of operational schools reported in the CCD dataset.</p>
-<div id="a93b358f" class="cell" data-execution_count="14">
+<div id="00fddb2e" class="cell" data-execution_count="14">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb20"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Create a fact table for district-level school counts.</span></span>
 <span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a>fact_district_school_counts <span class="op">=</span> df_district_dim[</span>
 <span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a>    [</span>
@@ -1007,7 +1105,7 @@ Number of columns: 58</code></pre>
 <span id="cb20-14"><a href="#cb20-14" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb20-15"><a href="#cb20-15" aria-hidden="true" tabindex="-1"></a><span class="co"># Display the first five records from the fact table.</span></span>
 <span id="cb20-16"><a href="#cb20-16" aria-hidden="true" tabindex="-1"></a>fact_district_school_counts.head()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-display" data-execution_count="14">
+<div class="cell-output cell-output-display" data-execution_count="599">
 <div>
 
 
@@ -1061,7 +1159,7 @@ Number of columns: 58</code></pre>
 <section id="loading-the-district-school-counts-fact-table-into-postgresql" class="level2">
 <h2 class="anchored" data-anchor-id="loading-the-district-school-counts-fact-table-into-postgresql">Loading the District School Counts Fact Table into PostgreSQL</h2>
 <p>After creating the district school counts fact table, I load it into PostgreSQL so it can be queried with SQL and used for future dashboard analysis.</p>
-<div id="b9208973" class="cell" data-execution_count="15">
+<div id="3c72558a" class="cell" data-execution_count="15">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb21"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Load the district school counts fact table into PostgreSQL.</span></span>
 <span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a>fact_district_school_counts.to_sql(</span>
 <span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a>    name<span class="op">=</span><span class="st">"fact_district_school_counts"</span>,</span>
@@ -1082,7 +1180,7 @@ Number of columns: 58</code></pre>
 <h2 class="anchored" data-anchor-id="analyzing-states-with-the-highest-number-of-operational-schools">Analyzing States with the Highest Number of Operational Schools</h2>
 <p>To begin the analytical portion of the project, I query PostgreSQL to identify which states have the highest total number of operational schools.</p>
 <p>This query joins the state dimension table with the district school counts fact table and aggregates the results at the state level.</p>
-<div id="cef341c4" class="cell" data-execution_count="16">
+<div id="f5d6182d" class="cell" data-execution_count="16">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb23"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="co"># SQL query to identify states with the highest operational school counts.</span></span>
 <span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a>top_states_query <span class="op">=</span> <span class="st">"""</span></span>
 <span id="cb23-3"><a href="#cb23-3" aria-hidden="true" tabindex="-1"></a><span class="st">SELECT</span></span>
@@ -1098,7 +1196,7 @@ Number of columns: 58</code></pre>
 <span id="cb23-13"><a href="#cb23-13" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb23-14"><a href="#cb23-14" aria-hidden="true" tabindex="-1"></a><span class="co"># Execute the SQL query and display the results.</span></span>
 <span id="cb23-15"><a href="#cb23-15" aria-hidden="true" tabindex="-1"></a>pd.read_sql(top_states_query, engine)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-display" data-execution_count="16">
+<div class="cell-output cell-output-display" data-execution_count="601">
 <div>
 
 
@@ -1172,7 +1270,7 @@ Number of columns: 58</code></pre>
 <h2 class="anchored" data-anchor-id="visualizing-the-top-10-states-by-operational-schools">Visualizing the Top 10 States by Operational Schools</h2>
 <p>To make the SQL analysis easier to interpret, I create a bar chart showing the top 10 states by total operational school count.</p>
 <p>This visualization helps translate the PostgreSQL query results into a clear portfolio-ready analytical output.</p>
-<div id="976df9b7" class="cell" data-execution_count="17">
+<div id="c3d6d513" class="cell" data-execution_count="17">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb24"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> matplotlib.pyplot <span class="im">as</span> plt</span>
 <span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb24-3"><a href="#cb24-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Store the SQL query result in a DataFrame for visualization.</span></span>
@@ -1194,14 +1292,14 @@ Number of columns: 58</code></pre>
 <span id="cb24-19"><a href="#cb24-19" aria-hidden="true" tabindex="-1"></a>plt.ylabel(<span class="st">"State"</span>)</span>
 <span id="cb24-20"><a href="#cb24-20" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb24-21"><a href="#cb24-21" aria-hidden="true" tabindex="-1"></a><span class="co"># Improve spacing so labels do not overlap.</span></span>
-<span id="cb24-22"><a href="#cb24-22" aria-hidden="true" tabindex="-1"></a>plt.tight_layout()</span>
+<span id="cb24-22"><a href="#cb24-22" aria-hidden="true" tabindex="-1"></a>plt.subplots_adjust(left<span class="op">=</span><span class="fl">0.28</span>)</span>
 <span id="cb24-23"><a href="#cb24-23" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb24-24"><a href="#cb24-24" aria-hidden="true" tabindex="-1"></a><span class="co"># Display the chart in the Quarto HTML report.</span></span>
 <span id="cb24-25"><a href="#cb24-25" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="education_tech_impact_pipeline_files/figure-html/cell-18-output-1.png" width="951" height="566" class="figure-img"></p>
+<p><img src="education_tech_impact_pipeline_files/figure-html/cell-18-output-1.png" width="762" height="523" class="figure-img"></p>
 </figure>
 </div>
 </div>
@@ -1211,7 +1309,7 @@ Number of columns: 58</code></pre>
 <h2 class="anchored" data-anchor-id="analyzing-average-operational-schools-per-district-by-state">Analyzing Average Operational Schools per District by State</h2>
 <p>To compare state-level district structures, I calculate the average number of operational schools per district for each state.</p>
 <p>This helps show which states tend to have larger or smaller district-level school systems.</p>
-<div id="e820d6df" class="cell" data-execution_count="18">
+<div id="e7d1aed7" class="cell" data-execution_count="18">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb25"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a><span class="co"># SQL query to calculate the average number of operational schools per district by state.</span></span>
 <span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a>avg_schools_per_district_query <span class="op">=</span> <span class="st">"""</span></span>
 <span id="cb25-3"><a href="#cb25-3" aria-hidden="true" tabindex="-1"></a><span class="st">SELECT</span></span>
@@ -1227,7 +1325,7 @@ Number of columns: 58</code></pre>
 <span id="cb25-13"><a href="#cb25-13" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb25-14"><a href="#cb25-14" aria-hidden="true" tabindex="-1"></a><span class="co"># Execute the SQL query and display the results.</span></span>
 <span id="cb25-15"><a href="#cb25-15" aria-hidden="true" tabindex="-1"></a>pd.read_sql(avg_schools_per_district_query, engine)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-display" data-execution_count="18">
+<div class="cell-output cell-output-display" data-execution_count="603">
 <div>
 
 
@@ -1300,7 +1398,7 @@ Number of columns: 58</code></pre>
 <section id="visualizing-average-operational-schools-per-district-by-state" class="level2">
 <h2 class="anchored" data-anchor-id="visualizing-average-operational-schools-per-district-by-state">Visualizing Average Operational Schools per District by State</h2>
 <p>To better interpret the state-level district averages, I create a second visualization showing the average number of operational schools per district.</p>
-<div id="1ed79c5a" class="cell" data-execution_count="19">
+<div id="d1752389" class="cell" data-execution_count="19">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb26"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Store the SQL query result in a DataFrame for visualization.</span></span>
 <span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a>avg_schools_df <span class="op">=</span> pd.read_sql(avg_schools_per_district_query, engine)</span>
 <span id="cb26-3"><a href="#cb26-3" aria-hidden="true" tabindex="-1"></a></span>
@@ -1320,14 +1418,14 @@ Number of columns: 58</code></pre>
 <span id="cb26-17"><a href="#cb26-17" aria-hidden="true" tabindex="-1"></a>plt.ylabel(<span class="st">"State"</span>)</span>
 <span id="cb26-18"><a href="#cb26-18" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb26-19"><a href="#cb26-19" aria-hidden="true" tabindex="-1"></a><span class="co"># Improve chart spacing.</span></span>
-<span id="cb26-20"><a href="#cb26-20" aria-hidden="true" tabindex="-1"></a>plt.tight_layout()</span>
+<span id="cb26-20"><a href="#cb26-20" aria-hidden="true" tabindex="-1"></a>plt.subplots_adjust(left<span class="op">=</span><span class="fl">0.28</span>)</span>
 <span id="cb26-21"><a href="#cb26-21" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb26-22"><a href="#cb26-22" aria-hidden="true" tabindex="-1"></a><span class="co"># Display the visualization.</span></span>
 <span id="cb26-23"><a href="#cb26-23" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="education_tech_impact_pipeline_files/figure-html/cell-20-output-1.png" width="951" height="566" class="figure-img"></p>
+<p><img src="education_tech_impact_pipeline_files/figure-html/cell-20-output-1.png" width="791" height="523" class="figure-img"></p>
 </figure>
 </div>
 </div>
@@ -1429,7 +1527,7 @@ Number of columns: 58</code></pre>
 <section id="data-quality-validation-checks" class="level2">
 <h2 class="anchored" data-anchor-id="data-quality-validation-checks">Data Quality Validation Checks</h2>
 <p>Before using the warehouse tables for analysis, I perform several basic data quality checks to validate the integrity of the transformed data.</p>
-<div id="538867f0" class="cell" data-execution_count="20">
+<div id="84a9fafb" class="cell" data-execution_count="20">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb27"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Count missing district identifiers.</span></span>
 <span id="cb27-2"><a href="#cb27-2" aria-hidden="true" tabindex="-1"></a>missing_district_ids <span class="op">=</span> df_district_dim[<span class="st">"district_id"</span>].isnull().<span class="bu">sum</span>()</span>
 <span id="cb27-3"><a href="#cb27-3" aria-hidden="true" tabindex="-1"></a></span>
@@ -1454,7 +1552,7 @@ Number of columns: 58</code></pre>
 <span id="cb27-22"><a href="#cb27-22" aria-hidden="true" tabindex="-1"></a>})</span>
 <span id="cb27-23"><a href="#cb27-23" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb27-24"><a href="#cb27-24" aria-hidden="true" tabindex="-1"></a>validation_results</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-display" data-execution_count="20">
+<div class="cell-output cell-output-display" data-execution_count="605">
 <div>
 
 
@@ -1493,7 +1591,7 @@ Number of columns: 58</code></pre>
 <h2 class="anchored" data-anchor-id="creating-the-year-dimension-table">Creating the Year Dimension Table</h2>
 <p>To support future longitudinal and multi-year analysis, I create a year dimension table.</p>
 <p>This table will eventually connect CCD, NAEP, and CRDC datasets across multiple reporting years.</p>
-<div id="3eacc687" class="cell" data-execution_count="21">
+<div id="e1076023" class="cell" data-execution_count="21">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb28"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Define the reporting years planned for the project.</span></span>
 <span id="cb28-2"><a href="#cb28-2" aria-hidden="true" tabindex="-1"></a>analysis_years <span class="op">=</span> [</span>
 <span id="cb28-3"><a href="#cb28-3" aria-hidden="true" tabindex="-1"></a>    <span class="dv">2009</span>,</span>
@@ -1514,7 +1612,7 @@ Number of columns: 58</code></pre>
 <span id="cb28-18"><a href="#cb28-18" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb28-19"><a href="#cb28-19" aria-hidden="true" tabindex="-1"></a><span class="co"># Display the year dimension table.</span></span>
 <span id="cb28-20"><a href="#cb28-20" aria-hidden="true" tabindex="-1"></a>df_year_dim</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-display" data-execution_count="21">
+<div class="cell-output cell-output-display" data-execution_count="606">
 <div>
 
 
@@ -1577,7 +1675,7 @@ Number of columns: 58</code></pre>
 <section id="loading-the-year-dimension-table-into-postgresql" class="level2">
 <h2 class="anchored" data-anchor-id="loading-the-year-dimension-table-into-postgresql">Loading the Year Dimension Table into PostgreSQL</h2>
 <p>After creating the year dimension table, I load it into PostgreSQL so future CCD, NAEP, and CRDC datasets can connect to a consistent reporting year structure.</p>
-<div id="7b16353d" class="cell" data-execution_count="22">
+<div id="03870171" class="cell" data-execution_count="22">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb29"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Load the year dimension table into PostgreSQL.</span></span>
 <span id="cb29-2"><a href="#cb29-2" aria-hidden="true" tabindex="-1"></a>df_year_dim.to_sql(</span>
 <span id="cb29-3"><a href="#cb29-3" aria-hidden="true" tabindex="-1"></a>    name<span class="op">=</span><span class="st">"dim_years"</span>,</span>
@@ -1597,7 +1695,7 @@ Number of columns: 58</code></pre>
 <section id="verifying-the-year-dimension-table-in-postgresql" class="level2">
 <h2 class="anchored" data-anchor-id="verifying-the-year-dimension-table-in-postgresql">Verifying the Year Dimension Table in PostgreSQL</h2>
 <p>To confirm the year dimension table loaded correctly, I query PostgreSQL and display the stored reporting years.</p>
-<div id="17091039" class="cell" data-execution_count="23">
+<div id="d4e9a95c" class="cell" data-execution_count="23">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb31"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Query PostgreSQL to display the year dimension table.</span></span>
 <span id="cb31-2"><a href="#cb31-2" aria-hidden="true" tabindex="-1"></a>year_dimension_query <span class="op">=</span> <span class="st">"""</span></span>
 <span id="cb31-3"><a href="#cb31-3" aria-hidden="true" tabindex="-1"></a><span class="st">SELECT *</span></span>
@@ -1607,7 +1705,7 @@ Number of columns: 58</code></pre>
 <span id="cb31-7"><a href="#cb31-7" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb31-8"><a href="#cb31-8" aria-hidden="true" tabindex="-1"></a><span class="co"># Display the year dimension records.</span></span>
 <span id="cb31-9"><a href="#cb31-9" aria-hidden="true" tabindex="-1"></a>pd.read_sql(year_dimension_query, engine)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-display" data-execution_count="23">
+<div class="cell-output cell-output-display" data-execution_count="608">
 <div>
 
 
@@ -1674,7 +1772,7 @@ Number of columns: 58</code></pre>
 <section id="creating-the-state-dimension-table-with-surrogate-keys" class="level2">
 <h2 class="anchored" data-anchor-id="creating-the-state-dimension-table-with-surrogate-keys">Creating the State Dimension Table with Surrogate Keys</h2>
 <p>To support future warehouse joins and multi-dataset integration, I create a dedicated state dimension table with surrogate integer keys.</p>
-<div id="fdd502ed" class="cell" data-execution_count="24">
+<div id="ee373b29" class="cell" data-execution_count="24">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb32"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Create a unique state dimension table from the district dimension dataset.</span></span>
 <span id="cb32-2"><a href="#cb32-2" aria-hidden="true" tabindex="-1"></a>df_states_dim <span class="op">=</span> (</span>
 <span id="cb32-3"><a href="#cb32-3" aria-hidden="true" tabindex="-1"></a>    df_district_dim[</span>
@@ -1694,7 +1792,7 @@ Number of columns: 58</code></pre>
 <span id="cb32-17"><a href="#cb32-17" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb32-18"><a href="#cb32-18" aria-hidden="true" tabindex="-1"></a><span class="co"># Display the state dimension table.</span></span>
 <span id="cb32-19"><a href="#cb32-19" aria-hidden="true" tabindex="-1"></a>df_states_dim.head()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-display" data-execution_count="24">
+<div class="cell-output cell-output-display" data-execution_count="609">
 <div>
 
 
@@ -1748,7 +1846,7 @@ Number of columns: 58</code></pre>
 <section id="loading-the-enhanced-state-dimension-into-postgresql" class="level2">
 <h2 class="anchored" data-anchor-id="loading-the-enhanced-state-dimension-into-postgresql">Loading the Enhanced State Dimension into PostgreSQL</h2>
 <p>After adding surrogate keys to the state dimension table, I load the enhanced warehouse dimension into PostgreSQL.</p>
-<div id="cd84ef81" class="cell" data-execution_count="25">
+<div id="cd8e8f8a" class="cell" data-execution_count="25">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb33"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb33-1"><a href="#cb33-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Load the enhanced state dimension table into PostgreSQL.</span></span>
 <span id="cb33-2"><a href="#cb33-2" aria-hidden="true" tabindex="-1"></a>df_states_dim.to_sql(</span>
 <span id="cb33-3"><a href="#cb33-3" aria-hidden="true" tabindex="-1"></a>    name<span class="op">=</span><span class="st">"dim_states"</span>,</span>
@@ -1768,7 +1866,7 @@ Number of columns: 58</code></pre>
 <section id="verifying-the-enhanced-state-dimension-in-postgresql" class="level2">
 <h2 class="anchored" data-anchor-id="verifying-the-enhanced-state-dimension-in-postgresql">Verifying the Enhanced State Dimension in PostgreSQL</h2>
 <p>To confirm the enhanced state dimension table loaded correctly, I query PostgreSQL and display the stored surrogate keys and state records.</p>
-<div id="ad54a1f6" class="cell" data-execution_count="26">
+<div id="079e0257" class="cell" data-execution_count="26">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb35"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb35-1"><a href="#cb35-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Query PostgreSQL to display the enhanced state dimension table.</span></span>
 <span id="cb35-2"><a href="#cb35-2" aria-hidden="true" tabindex="-1"></a>state_dimension_query <span class="op">=</span> <span class="st">"""</span></span>
 <span id="cb35-3"><a href="#cb35-3" aria-hidden="true" tabindex="-1"></a><span class="st">SELECT *</span></span>
@@ -1778,7 +1876,7 @@ Number of columns: 58</code></pre>
 <span id="cb35-7"><a href="#cb35-7" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb35-8"><a href="#cb35-8" aria-hidden="true" tabindex="-1"></a><span class="co"># Display the PostgreSQL state dimension table.</span></span>
 <span id="cb35-9"><a href="#cb35-9" aria-hidden="true" tabindex="-1"></a>pd.read_sql(state_dimension_query, engine)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-display" data-execution_count="26">
+<div class="cell-output cell-output-display" data-execution_count="611">
 <div>
 
 
@@ -2144,7 +2242,7 @@ Number of columns: 58</code></pre>
 <section id="creating-an-enhanced-fact-table-with-surrogate-keys" class="level2">
 <h2 class="anchored" data-anchor-id="creating-an-enhanced-fact-table-with-surrogate-keys">Creating an Enhanced Fact Table with Surrogate Keys</h2>
 <p>To improve warehouse normalization and prepare for future multi-dataset integration, I create an enhanced fact table that connects to the state dimension using surrogate keys.</p>
-<div id="d0ab2936" class="cell" data-execution_count="27">
+<div id="14bf50b8" class="cell" data-execution_count="27">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb36"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb36-1"><a href="#cb36-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Merge the existing district school counts fact table with the enhanced state dimension.</span></span>
 <span id="cb36-2"><a href="#cb36-2" aria-hidden="true" tabindex="-1"></a>df_fact_enhanced <span class="op">=</span> fact_district_school_counts.merge(</span>
 <span id="cb36-3"><a href="#cb36-3" aria-hidden="true" tabindex="-1"></a>    df_states_dim[</span>
@@ -2166,7 +2264,7 @@ Number of columns: 58</code></pre>
 <span id="cb36-19"><a href="#cb36-19" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb36-20"><a href="#cb36-20" aria-hidden="true" tabindex="-1"></a><span class="co"># Display the enhanced fact table.</span></span>
 <span id="cb36-21"><a href="#cb36-21" aria-hidden="true" tabindex="-1"></a>df_fact_enhanced.head()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-display" data-execution_count="27">
+<div class="cell-output cell-output-display" data-execution_count="612">
 <div>
 
 
@@ -2226,7 +2324,7 @@ Number of columns: 58</code></pre>
 <section id="loading-the-enhanced-district-school-counts-fact-table-into-postgresql" class="level2">
 <h2 class="anchored" data-anchor-id="loading-the-enhanced-district-school-counts-fact-table-into-postgresql">Loading the Enhanced District School Counts Fact Table into PostgreSQL</h2>
 <p>After adding the state surrogate key to the fact table, I load the enhanced fact table into PostgreSQL for improved warehouse-style analytics.</p>
-<div id="753e873e" class="cell" data-execution_count="28">
+<div id="fdb8e184" class="cell" data-execution_count="28">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb37"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb37-1"><a href="#cb37-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Load the enhanced district school counts fact table into PostgreSQL.</span></span>
 <span id="cb37-2"><a href="#cb37-2" aria-hidden="true" tabindex="-1"></a>df_fact_enhanced.to_sql(</span>
 <span id="cb37-3"><a href="#cb37-3" aria-hidden="true" tabindex="-1"></a>    name<span class="op">=</span><span class="st">"fact_district_school_counts_enhanced"</span>,</span>
@@ -2246,7 +2344,7 @@ Number of columns: 58</code></pre>
 <section id="verifying-the-enhanced-fact-table-in-postgresql" class="level2">
 <h2 class="anchored" data-anchor-id="verifying-the-enhanced-fact-table-in-postgresql">Verifying the Enhanced Fact Table in PostgreSQL</h2>
 <p>To confirm the enhanced fact table loaded correctly, I query PostgreSQL and display the warehouse-ready records with surrogate state keys.</p>
-<div id="83715c3c" class="cell" data-execution_count="29">
+<div id="a8180dae" class="cell" data-execution_count="29">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb39"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb39-1"><a href="#cb39-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Query PostgreSQL to display the enhanced fact table.</span></span>
 <span id="cb39-2"><a href="#cb39-2" aria-hidden="true" tabindex="-1"></a>enhanced_fact_query <span class="op">=</span> <span class="st">"""</span></span>
 <span id="cb39-3"><a href="#cb39-3" aria-hidden="true" tabindex="-1"></a><span class="st">SELECT *</span></span>
@@ -2256,7 +2354,7 @@ Number of columns: 58</code></pre>
 <span id="cb39-7"><a href="#cb39-7" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb39-8"><a href="#cb39-8" aria-hidden="true" tabindex="-1"></a><span class="co"># Display the enhanced PostgreSQL fact table.</span></span>
 <span id="cb39-9"><a href="#cb39-9" aria-hidden="true" tabindex="-1"></a>pd.read_sql(enhanced_fact_query, engine)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-display" data-execution_count="29">
+<div class="cell-output cell-output-display" data-execution_count="614">
 <div>
 
 
@@ -2352,7 +2450,7 @@ Number of columns: 58</code></pre>
 <h2 class="anchored" data-anchor-id="analyzing-operational-schools-using-the-enhanced-warehouse-model">Analyzing Operational Schools Using the Enhanced Warehouse Model</h2>
 <p>To validate the enhanced warehouse model, I run an analytical SQL query using the enhanced fact table and the state dimension table.</p>
 <p>This confirms that the surrogate-key relationship supports state-level aggregation correctly.</p>
-<div id="e869b131" class="cell" data-execution_count="30">
+<div id="31d44c2c" class="cell" data-execution_count="30">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb40"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb40-1"><a href="#cb40-1" aria-hidden="true" tabindex="-1"></a><span class="co"># SQL query using the enhanced fact table and state surrogate key relationship.</span></span>
 <span id="cb40-2"><a href="#cb40-2" aria-hidden="true" tabindex="-1"></a>enhanced_state_analysis_query <span class="op">=</span> <span class="st">"""</span></span>
 <span id="cb40-3"><a href="#cb40-3" aria-hidden="true" tabindex="-1"></a><span class="st">SELECT</span></span>
@@ -2368,7 +2466,7 @@ Number of columns: 58</code></pre>
 <span id="cb40-13"><a href="#cb40-13" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb40-14"><a href="#cb40-14" aria-hidden="true" tabindex="-1"></a><span class="co"># Display the top states using the enhanced warehouse model.</span></span>
 <span id="cb40-15"><a href="#cb40-15" aria-hidden="true" tabindex="-1"></a>pd.read_sql(enhanced_state_analysis_query, engine)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-display" data-execution_count="30">
+<div class="cell-output cell-output-display" data-execution_count="615">
 <div>
 
 
@@ -2441,7 +2539,7 @@ Number of columns: 58</code></pre>
 <section id="visualizing-operational-schools-using-the-enhanced-warehouse-model" class="level2">
 <h2 class="anchored" data-anchor-id="visualizing-operational-schools-using-the-enhanced-warehouse-model">Visualizing Operational Schools Using the Enhanced Warehouse Model</h2>
 <p>To make the enhanced warehouse analysis easier to interpret, I create a visualization using the surrogate-key fact table and state dimension relationship.</p>
-<div id="040e0214" class="cell" data-execution_count="31">
+<div id="aef5cf4d" class="cell" data-execution_count="31">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb41"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb41-1"><a href="#cb41-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Store the enhanced SQL analysis result in a DataFrame.</span></span>
 <span id="cb41-2"><a href="#cb41-2" aria-hidden="true" tabindex="-1"></a>enhanced_state_analysis_df <span class="op">=</span> pd.read_sql(enhanced_state_analysis_query, engine)</span>
 <span id="cb41-3"><a href="#cb41-3" aria-hidden="true" tabindex="-1"></a></span>
@@ -2461,14 +2559,14 @@ Number of columns: 58</code></pre>
 <span id="cb41-17"><a href="#cb41-17" aria-hidden="true" tabindex="-1"></a>plt.ylabel(<span class="st">"State"</span>)</span>
 <span id="cb41-18"><a href="#cb41-18" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb41-19"><a href="#cb41-19" aria-hidden="true" tabindex="-1"></a><span class="co"># Improve chart spacing.</span></span>
-<span id="cb41-20"><a href="#cb41-20" aria-hidden="true" tabindex="-1"></a>plt.tight_layout()</span>
+<span id="cb41-20"><a href="#cb41-20" aria-hidden="true" tabindex="-1"></a>plt.subplots_adjust(left<span class="op">=</span><span class="fl">0.28</span>)</span>
 <span id="cb41-21"><a href="#cb41-21" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb41-22"><a href="#cb41-22" aria-hidden="true" tabindex="-1"></a><span class="co"># Display the visualization.</span></span>
 <span id="cb41-23"><a href="#cb41-23" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="education_tech_impact_pipeline_files/figure-html/cell-32-output-1.png" width="951" height="566" class="figure-img"></p>
+<p><img src="education_tech_impact_pipeline_files/figure-html/cell-32-output-1.png" width="762" height="523" class="figure-img"></p>
 </figure>
 </div>
 </div>
@@ -2478,7 +2576,7 @@ Number of columns: 58</code></pre>
 <h2 class="anchored" data-anchor-id="designing-a-future-educational-metrics-fact-table">Designing a Future Educational Metrics Fact Table</h2>
 <p>To prepare for future NAEP and CRDC integration, I design a reusable educational metrics fact table structure.</p>
 <p>This future warehouse table will support educational outcome analysis across districts, states, and reporting years.</p>
-<div id="24d37abc" class="cell" data-execution_count="32">
+<div id="3fa0816c" class="cell" data-execution_count="32">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb42"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb42-1"><a href="#cb42-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Create an empty educational metrics fact table structure.</span></span>
 <span id="cb42-2"><a href="#cb42-2" aria-hidden="true" tabindex="-1"></a>df_educational_metrics_fact <span class="op">=</span> pd.DataFrame({</span>
 <span id="cb42-3"><a href="#cb42-3" aria-hidden="true" tabindex="-1"></a>    <span class="st">"district_id"</span>: pd.Series(dtype<span class="op">=</span><span class="st">"object"</span>),</span>
@@ -2490,7 +2588,7 @@ Number of columns: 58</code></pre>
 <span id="cb42-9"><a href="#cb42-9" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb42-10"><a href="#cb42-10" aria-hidden="true" tabindex="-1"></a><span class="co"># Display the warehouse-ready fact table structure.</span></span>
 <span id="cb42-11"><a href="#cb42-11" aria-hidden="true" tabindex="-1"></a>df_educational_metrics_fact</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-display" data-execution_count="32">
+<div class="cell-output cell-output-display" data-execution_count="617">
 <div>
 
 
@@ -2579,6 +2677,1343 @@ Number of columns: 58</code></pre>
 </table>
 <p>This warehouse foundation will support future educational research, analytics engineering workflows, and large-scale public education analysis.</p>
 </section>
+</section>
+<section id="creating-prototype-educational-metrics-records" class="level2">
+<h2 class="anchored" data-anchor-id="creating-prototype-educational-metrics-records">Creating Prototype Educational Metrics Records</h2>
+<p>Before integrating future NAEP and CRDC datasets, I create a prototype educational metrics fact table record structure.</p>
+<p>This helps validate how future educational outcome metrics will connect to districts, states, and reporting years inside the warehouse.</p>
+<div id="b885444a" class="cell" data-execution_count="33">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb43"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb43-1"><a href="#cb43-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Create prototype educational metric records.</span></span>
+<span id="cb43-2"><a href="#cb43-2" aria-hidden="true" tabindex="-1"></a>prototype_metrics <span class="op">=</span> pd.DataFrame({</span>
+<span id="cb43-3"><a href="#cb43-3" aria-hidden="true" tabindex="-1"></a>    <span class="st">"district_id"</span>: [</span>
+<span id="cb43-4"><a href="#cb43-4" aria-hidden="true" tabindex="-1"></a>        df_district_dim.loc[<span class="dv">0</span>, <span class="st">"district_id"</span>],</span>
+<span id="cb43-5"><a href="#cb43-5" aria-hidden="true" tabindex="-1"></a>        df_district_dim.loc[<span class="dv">1</span>, <span class="st">"district_id"</span>]</span>
+<span id="cb43-6"><a href="#cb43-6" aria-hidden="true" tabindex="-1"></a>    ],</span>
+<span id="cb43-7"><a href="#cb43-7" aria-hidden="true" tabindex="-1"></a>    <span class="st">"state_key"</span>: [</span>
+<span id="cb43-8"><a href="#cb43-8" aria-hidden="true" tabindex="-1"></a>        <span class="dv">1</span>,</span>
+<span id="cb43-9"><a href="#cb43-9" aria-hidden="true" tabindex="-1"></a>        <span class="dv">1</span></span>
+<span id="cb43-10"><a href="#cb43-10" aria-hidden="true" tabindex="-1"></a>    ],</span>
+<span id="cb43-11"><a href="#cb43-11" aria-hidden="true" tabindex="-1"></a>    <span class="st">"year_key"</span>: [</span>
+<span id="cb43-12"><a href="#cb43-12" aria-hidden="true" tabindex="-1"></a>        <span class="dv">1</span>,</span>
+<span id="cb43-13"><a href="#cb43-13" aria-hidden="true" tabindex="-1"></a>        <span class="dv">2</span></span>
+<span id="cb43-14"><a href="#cb43-14" aria-hidden="true" tabindex="-1"></a>    ],</span>
+<span id="cb43-15"><a href="#cb43-15" aria-hidden="true" tabindex="-1"></a>    <span class="st">"metric_name"</span>: [</span>
+<span id="cb43-16"><a href="#cb43-16" aria-hidden="true" tabindex="-1"></a>        <span class="st">"average_math_score"</span>,</span>
+<span id="cb43-17"><a href="#cb43-17" aria-hidden="true" tabindex="-1"></a>        <span class="st">"average_reading_score"</span></span>
+<span id="cb43-18"><a href="#cb43-18" aria-hidden="true" tabindex="-1"></a>    ],</span>
+<span id="cb43-19"><a href="#cb43-19" aria-hidden="true" tabindex="-1"></a>    <span class="st">"metric_value"</span>: [</span>
+<span id="cb43-20"><a href="#cb43-20" aria-hidden="true" tabindex="-1"></a>        <span class="fl">245.7</span>,</span>
+<span id="cb43-21"><a href="#cb43-21" aria-hidden="true" tabindex="-1"></a>        <span class="fl">251.3</span></span>
+<span id="cb43-22"><a href="#cb43-22" aria-hidden="true" tabindex="-1"></a>    ]</span>
+<span id="cb43-23"><a href="#cb43-23" aria-hidden="true" tabindex="-1"></a>})</span>
+<span id="cb43-24"><a href="#cb43-24" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb43-25"><a href="#cb43-25" aria-hidden="true" tabindex="-1"></a><span class="co"># Display the prototype educational metrics records.</span></span>
+<span id="cb43-26"><a href="#cb43-26" aria-hidden="true" tabindex="-1"></a>prototype_metrics</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-display" data-execution_count="618">
+<div>
+
+
+<table class="dataframe caption-top table table-sm table-striped small" data-border="1">
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th"></th>
+<th data-quarto-table-cell-role="th">district_id</th>
+<th data-quarto-table-cell-role="th">state_key</th>
+<th data-quarto-table-cell-role="th">year_key</th>
+<th data-quarto-table-cell-role="th">metric_name</th>
+<th data-quarto-table-cell-role="th">metric_value</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">0</th>
+<td>100002</td>
+<td>1</td>
+<td>1</td>
+<td>average_math_score</td>
+<td>245.7</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">1</th>
+<td>100005</td>
+<td>1</td>
+<td>2</td>
+<td>average_reading_score</td>
+<td>251.3</td>
+</tr>
+</tbody>
+</table>
+
+</div>
+</div>
+</div>
+</section>
+<section id="loading-prototype-educational-metrics-into-postgresql" class="level2">
+<h2 class="anchored" data-anchor-id="loading-prototype-educational-metrics-into-postgresql">Loading Prototype Educational Metrics into PostgreSQL</h2>
+<p>To validate the future warehouse architecture, I load prototype educational metric records into PostgreSQL.</p>
+<div id="930e00bb" class="cell" data-execution_count="34">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb44"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb44-1"><a href="#cb44-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Load the prototype educational metrics into PostgreSQL.</span></span>
+<span id="cb44-2"><a href="#cb44-2" aria-hidden="true" tabindex="-1"></a>prototype_metrics.to_sql(</span>
+<span id="cb44-3"><a href="#cb44-3" aria-hidden="true" tabindex="-1"></a>    name<span class="op">=</span><span class="st">"fact_educational_metrics_prototype"</span>,</span>
+<span id="cb44-4"><a href="#cb44-4" aria-hidden="true" tabindex="-1"></a>    con<span class="op">=</span>engine,</span>
+<span id="cb44-5"><a href="#cb44-5" aria-hidden="true" tabindex="-1"></a>    schema<span class="op">=</span><span class="st">"public"</span>,</span>
+<span id="cb44-6"><a href="#cb44-6" aria-hidden="true" tabindex="-1"></a>    if_exists<span class="op">=</span><span class="st">"replace"</span>,</span>
+<span id="cb44-7"><a href="#cb44-7" aria-hidden="true" tabindex="-1"></a>    index<span class="op">=</span><span class="va">False</span></span>
+<span id="cb44-8"><a href="#cb44-8" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb44-9"><a href="#cb44-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb44-10"><a href="#cb44-10" aria-hidden="true" tabindex="-1"></a><span class="co"># Confirm successful PostgreSQL table creation.</span></span>
+<span id="cb44-11"><a href="#cb44-11" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Prototype educational metrics fact table loaded successfully into PostgreSQL."</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Prototype educational metrics fact table loaded successfully into PostgreSQL.</code></pre>
+</div>
+</div>
+</section>
+<section id="verifying-prototype-educational-metrics-in-postgresql" class="level2">
+<h2 class="anchored" data-anchor-id="verifying-prototype-educational-metrics-in-postgresql">Verifying Prototype Educational Metrics in PostgreSQL</h2>
+<p>To confirm the prototype educational metrics table loaded correctly, I query PostgreSQL and preview the records.</p>
+<div id="7256bf35" class="cell" data-execution_count="35">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb46"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb46-1"><a href="#cb46-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Query PostgreSQL to display the prototype educational metrics table.</span></span>
+<span id="cb46-2"><a href="#cb46-2" aria-hidden="true" tabindex="-1"></a>prototype_metrics_query <span class="op">=</span> <span class="st">"""</span></span>
+<span id="cb46-3"><a href="#cb46-3" aria-hidden="true" tabindex="-1"></a><span class="st">SELECT *</span></span>
+<span id="cb46-4"><a href="#cb46-4" aria-hidden="true" tabindex="-1"></a><span class="st">FROM public.fact_educational_metrics_prototype;</span></span>
+<span id="cb46-5"><a href="#cb46-5" aria-hidden="true" tabindex="-1"></a><span class="st">"""</span></span>
+<span id="cb46-6"><a href="#cb46-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb46-7"><a href="#cb46-7" aria-hidden="true" tabindex="-1"></a><span class="co"># Display the prototype educational metrics records.</span></span>
+<span id="cb46-8"><a href="#cb46-8" aria-hidden="true" tabindex="-1"></a>pd.read_sql(prototype_metrics_query, engine)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-display" data-execution_count="620">
+<div>
+
+
+<table class="dataframe caption-top table table-sm table-striped small" data-border="1">
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th"></th>
+<th data-quarto-table-cell-role="th">district_id</th>
+<th data-quarto-table-cell-role="th">state_key</th>
+<th data-quarto-table-cell-role="th">year_key</th>
+<th data-quarto-table-cell-role="th">metric_name</th>
+<th data-quarto-table-cell-role="th">metric_value</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">0</th>
+<td>100002</td>
+<td>1</td>
+<td>1</td>
+<td>average_math_score</td>
+<td>245.7</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">1</th>
+<td>100005</td>
+<td>1</td>
+<td>2</td>
+<td>average_reading_score</td>
+<td>251.3</td>
+</tr>
+</tbody>
+</table>
+
+</div>
+</div>
+</div>
+</section>
+<section id="joining-prototype-metrics-with-warehouse-dimensions" class="level2">
+<h2 class="anchored" data-anchor-id="joining-prototype-metrics-with-warehouse-dimensions">Joining Prototype Metrics with Warehouse Dimensions</h2>
+<p>To validate the prototype educational metrics design, I join the prototype metrics fact table with the state and year dimensions.</p>
+<p>This confirms that future NAEP and CRDC metrics can be connected to the warehouse model through surrogate keys.</p>
+<div id="a46a636b" class="cell" data-execution_count="36">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb47"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb47-1"><a href="#cb47-1" aria-hidden="true" tabindex="-1"></a><span class="co"># SQL query joining prototype metrics to the state and year dimensions.</span></span>
+<span id="cb47-2"><a href="#cb47-2" aria-hidden="true" tabindex="-1"></a>prototype_metrics_join_query <span class="op">=</span> <span class="st">"""</span></span>
+<span id="cb47-3"><a href="#cb47-3" aria-hidden="true" tabindex="-1"></a><span class="st">SELECT</span></span>
+<span id="cb47-4"><a href="#cb47-4" aria-hidden="true" tabindex="-1"></a><span class="st">    m.district_id,</span></span>
+<span id="cb47-5"><a href="#cb47-5" aria-hidden="true" tabindex="-1"></a><span class="st">    s.state_name,</span></span>
+<span id="cb47-6"><a href="#cb47-6" aria-hidden="true" tabindex="-1"></a><span class="st">    y.reporting_year,</span></span>
+<span id="cb47-7"><a href="#cb47-7" aria-hidden="true" tabindex="-1"></a><span class="st">    m.metric_name,</span></span>
+<span id="cb47-8"><a href="#cb47-8" aria-hidden="true" tabindex="-1"></a><span class="st">    m.metric_value</span></span>
+<span id="cb47-9"><a href="#cb47-9" aria-hidden="true" tabindex="-1"></a><span class="st">FROM public.fact_educational_metrics_prototype m</span></span>
+<span id="cb47-10"><a href="#cb47-10" aria-hidden="true" tabindex="-1"></a><span class="st">JOIN public.dim_states s</span></span>
+<span id="cb47-11"><a href="#cb47-11" aria-hidden="true" tabindex="-1"></a><span class="st">    ON m.state_key = s.state_key</span></span>
+<span id="cb47-12"><a href="#cb47-12" aria-hidden="true" tabindex="-1"></a><span class="st">JOIN public.dim_years y</span></span>
+<span id="cb47-13"><a href="#cb47-13" aria-hidden="true" tabindex="-1"></a><span class="st">    ON m.year_key = y.year_key</span></span>
+<span id="cb47-14"><a href="#cb47-14" aria-hidden="true" tabindex="-1"></a><span class="st">ORDER BY y.reporting_year, m.metric_name;</span></span>
+<span id="cb47-15"><a href="#cb47-15" aria-hidden="true" tabindex="-1"></a><span class="st">"""</span></span>
+<span id="cb47-16"><a href="#cb47-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb47-17"><a href="#cb47-17" aria-hidden="true" tabindex="-1"></a><span class="co"># Display the joined prototype metrics records.</span></span>
+<span id="cb47-18"><a href="#cb47-18" aria-hidden="true" tabindex="-1"></a>pd.read_sql(prototype_metrics_join_query, engine)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-display" data-execution_count="621">
+<div>
+
+
+<table class="dataframe caption-top table table-sm table-striped small" data-border="1">
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th"></th>
+<th data-quarto-table-cell-role="th">district_id</th>
+<th data-quarto-table-cell-role="th">state_name</th>
+<th data-quarto-table-cell-role="th">reporting_year</th>
+<th data-quarto-table-cell-role="th">metric_name</th>
+<th data-quarto-table-cell-role="th">metric_value</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">0</th>
+<td>100002</td>
+<td>ALABAMA</td>
+<td>2009</td>
+<td>average_math_score</td>
+<td>245.7</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">1</th>
+<td>100005</td>
+<td>ALABAMA</td>
+<td>2011</td>
+<td>average_reading_score</td>
+<td>251.3</td>
+</tr>
+</tbody>
+</table>
+
+</div>
+</div>
+</div>
+</section>
+<section id="exploring-the-naep-dataset-structure" class="level2">
+<h2 class="anchored" data-anchor-id="exploring-the-naep-dataset-structure">Exploring the NAEP Dataset Structure</h2>
+<p>Before integrating NAEP data into the warehouse, I first inspect the structure of the raw NAEP files.</p>
+<p>This helps identify available columns, reporting formats, and educational metrics across years.</p>
+<div id="d4c6d8f6" class="cell" data-execution_count="37">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb48"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb48-1"><a href="#cb48-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Load the NAEP dataset using the correct header row.</span></span>
+<span id="cb48-2"><a href="#cb48-2" aria-hidden="true" tabindex="-1"></a>naep_clean_df <span class="op">=</span> pd.read_excel(</span>
+<span id="cb48-3"><a href="#cb48-3" aria-hidden="true" tabindex="-1"></a>    <span class="st">"../data/raw/naep/naep_math_grade8_state_2009_2024.Xls"</span>,</span>
+<span id="cb48-4"><a href="#cb48-4" aria-hidden="true" tabindex="-1"></a>    header<span class="op">=</span><span class="dv">8</span></span>
+<span id="cb48-5"><a href="#cb48-5" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb48-6"><a href="#cb48-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb48-7"><a href="#cb48-7" aria-hidden="true" tabindex="-1"></a><span class="co"># Display the cleaned NAEP dataset.</span></span>
+<span id="cb48-8"><a href="#cb48-8" aria-hidden="true" tabindex="-1"></a>naep_clean_df.head()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-display" data-execution_count="622">
+<div>
+
+
+<table class="dataframe caption-top table table-sm table-striped small" data-border="1">
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th"></th>
+<th data-quarto-table-cell-role="th">Year</th>
+<th data-quarto-table-cell-role="th">Jurisdiction</th>
+<th data-quarto-table-cell-role="th">All students</th>
+<th data-quarto-table-cell-role="th">Average scale score</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">0</th>
+<td>2024</td>
+<td>National</td>
+<td>All students</td>
+<td>273.833456</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">1</th>
+<td>2024</td>
+<td>Alabama</td>
+<td>All students</td>
+<td>261.769896</td>
+</tr>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">2</th>
+<td>2024</td>
+<td>Alaska</td>
+<td>All students</td>
+<td>263.962653</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">3</th>
+<td>2024</td>
+<td>Arizona</td>
+<td>All students</td>
+<td>269.656164</td>
+</tr>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">4</th>
+<td>2024</td>
+<td>Arkansas</td>
+<td>All students</td>
+<td>266.194834</td>
+</tr>
+</tbody>
+</table>
+
+</div>
+</div>
+</div>
+</section>
+<section id="cleaning-and-standardizing-the-naep-dataset" class="level2">
+<h2 class="anchored" data-anchor-id="cleaning-and-standardizing-the-naep-dataset">Cleaning and Standardizing the NAEP Dataset</h2>
+<p>To prepare the NAEP dataset for warehouse integration, I standardize column names and select the core analytical fields.</p>
+<div id="9cbfa0e1" class="cell" data-execution_count="38">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb49"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb49-1"><a href="#cb49-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Standardize NAEP column names.</span></span>
+<span id="cb49-2"><a href="#cb49-2" aria-hidden="true" tabindex="-1"></a>naep_clean_df.columns <span class="op">=</span> [</span>
+<span id="cb49-3"><a href="#cb49-3" aria-hidden="true" tabindex="-1"></a>    <span class="st">"reporting_year"</span>,</span>
+<span id="cb49-4"><a href="#cb49-4" aria-hidden="true" tabindex="-1"></a>    <span class="st">"jurisdiction"</span>,</span>
+<span id="cb49-5"><a href="#cb49-5" aria-hidden="true" tabindex="-1"></a>    <span class="st">"student_group"</span>,</span>
+<span id="cb49-6"><a href="#cb49-6" aria-hidden="true" tabindex="-1"></a>    <span class="st">"average_scale_score"</span></span>
+<span id="cb49-7"><a href="#cb49-7" aria-hidden="true" tabindex="-1"></a>]</span>
+<span id="cb49-8"><a href="#cb49-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb49-9"><a href="#cb49-9" aria-hidden="true" tabindex="-1"></a><span class="co"># Keep only the required analytical columns.</span></span>
+<span id="cb49-10"><a href="#cb49-10" aria-hidden="true" tabindex="-1"></a>naep_clean_df <span class="op">=</span> naep_clean_df[</span>
+<span id="cb49-11"><a href="#cb49-11" aria-hidden="true" tabindex="-1"></a>    [</span>
+<span id="cb49-12"><a href="#cb49-12" aria-hidden="true" tabindex="-1"></a>        <span class="st">"reporting_year"</span>,</span>
+<span id="cb49-13"><a href="#cb49-13" aria-hidden="true" tabindex="-1"></a>        <span class="st">"jurisdiction"</span>,</span>
+<span id="cb49-14"><a href="#cb49-14" aria-hidden="true" tabindex="-1"></a>        <span class="st">"student_group"</span>,</span>
+<span id="cb49-15"><a href="#cb49-15" aria-hidden="true" tabindex="-1"></a>        <span class="st">"average_scale_score"</span></span>
+<span id="cb49-16"><a href="#cb49-16" aria-hidden="true" tabindex="-1"></a>    ]</span>
+<span id="cb49-17"><a href="#cb49-17" aria-hidden="true" tabindex="-1"></a>]</span>
+<span id="cb49-18"><a href="#cb49-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb49-19"><a href="#cb49-19" aria-hidden="true" tabindex="-1"></a><span class="co"># Display the cleaned NAEP dataset.</span></span>
+<span id="cb49-20"><a href="#cb49-20" aria-hidden="true" tabindex="-1"></a>naep_clean_df.head()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-display" data-execution_count="623">
+<div>
+
+
+<table class="dataframe caption-top table table-sm table-striped small" data-border="1">
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th"></th>
+<th data-quarto-table-cell-role="th">reporting_year</th>
+<th data-quarto-table-cell-role="th">jurisdiction</th>
+<th data-quarto-table-cell-role="th">student_group</th>
+<th data-quarto-table-cell-role="th">average_scale_score</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">0</th>
+<td>2024</td>
+<td>National</td>
+<td>All students</td>
+<td>273.833456</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">1</th>
+<td>2024</td>
+<td>Alabama</td>
+<td>All students</td>
+<td>261.769896</td>
+</tr>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">2</th>
+<td>2024</td>
+<td>Alaska</td>
+<td>All students</td>
+<td>263.962653</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">3</th>
+<td>2024</td>
+<td>Arizona</td>
+<td>All students</td>
+<td>269.656164</td>
+</tr>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">4</th>
+<td>2024</td>
+<td>Arkansas</td>
+<td>All students</td>
+<td>266.194834</td>
+</tr>
+</tbody>
+</table>
+
+</div>
+</div>
+</div>
+</section>
+<section id="validating-the-naep-dataset" class="level2">
+<h2 class="anchored" data-anchor-id="validating-the-naep-dataset">Validating the NAEP Dataset</h2>
+<p>Before integrating NAEP data into the warehouse, I perform several validation checks to confirm data quality and completeness.</p>
+<div id="0e68e4d5" class="cell" data-execution_count="39">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb50"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb50-1"><a href="#cb50-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Count missing values in the NAEP dataset.</span></span>
+<span id="cb50-2"><a href="#cb50-2" aria-hidden="true" tabindex="-1"></a>naep_missing_values <span class="op">=</span> naep_clean_df.isnull().<span class="bu">sum</span>()</span>
+<span id="cb50-3"><a href="#cb50-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb50-4"><a href="#cb50-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Count total NAEP records.</span></span>
+<span id="cb50-5"><a href="#cb50-5" aria-hidden="true" tabindex="-1"></a>naep_total_records <span class="op">=</span> <span class="bu">len</span>(naep_clean_df)</span>
+<span id="cb50-6"><a href="#cb50-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb50-7"><a href="#cb50-7" aria-hidden="true" tabindex="-1"></a><span class="co"># Display validation results.</span></span>
+<span id="cb50-8"><a href="#cb50-8" aria-hidden="true" tabindex="-1"></a>naep_validation_results <span class="op">=</span> pd.DataFrame({</span>
+<span id="cb50-9"><a href="#cb50-9" aria-hidden="true" tabindex="-1"></a>    <span class="st">"validation_check"</span>: [</span>
+<span id="cb50-10"><a href="#cb50-10" aria-hidden="true" tabindex="-1"></a>        <span class="st">"Total NAEP records"</span>,</span>
+<span id="cb50-11"><a href="#cb50-11" aria-hidden="true" tabindex="-1"></a>        <span class="st">"Missing reporting years"</span>,</span>
+<span id="cb50-12"><a href="#cb50-12" aria-hidden="true" tabindex="-1"></a>        <span class="st">"Missing jurisdictions"</span>,</span>
+<span id="cb50-13"><a href="#cb50-13" aria-hidden="true" tabindex="-1"></a>        <span class="st">"Missing student groups"</span>,</span>
+<span id="cb50-14"><a href="#cb50-14" aria-hidden="true" tabindex="-1"></a>        <span class="st">"Missing average scale scores"</span></span>
+<span id="cb50-15"><a href="#cb50-15" aria-hidden="true" tabindex="-1"></a>    ],</span>
+<span id="cb50-16"><a href="#cb50-16" aria-hidden="true" tabindex="-1"></a>    <span class="st">"result"</span>: [</span>
+<span id="cb50-17"><a href="#cb50-17" aria-hidden="true" tabindex="-1"></a>        naep_total_records,</span>
+<span id="cb50-18"><a href="#cb50-18" aria-hidden="true" tabindex="-1"></a>        naep_missing_values[<span class="st">"reporting_year"</span>],</span>
+<span id="cb50-19"><a href="#cb50-19" aria-hidden="true" tabindex="-1"></a>        naep_missing_values[<span class="st">"jurisdiction"</span>],</span>
+<span id="cb50-20"><a href="#cb50-20" aria-hidden="true" tabindex="-1"></a>        naep_missing_values[<span class="st">"student_group"</span>],</span>
+<span id="cb50-21"><a href="#cb50-21" aria-hidden="true" tabindex="-1"></a>        naep_missing_values[<span class="st">"average_scale_score"</span>]</span>
+<span id="cb50-22"><a href="#cb50-22" aria-hidden="true" tabindex="-1"></a>    ]</span>
+<span id="cb50-23"><a href="#cb50-23" aria-hidden="true" tabindex="-1"></a>})</span>
+<span id="cb50-24"><a href="#cb50-24" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb50-25"><a href="#cb50-25" aria-hidden="true" tabindex="-1"></a><span class="co"># Display NAEP validation results.</span></span>
+<span id="cb50-26"><a href="#cb50-26" aria-hidden="true" tabindex="-1"></a>naep_validation_results</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-display" data-execution_count="624">
+<div>
+
+
+<table class="dataframe caption-top table table-sm table-striped small" data-border="1">
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th"></th>
+<th data-quarto-table-cell-role="th">validation_check</th>
+<th data-quarto-table-cell-role="th">result</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">0</th>
+<td>Total NAEP records</td>
+<td>490</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">1</th>
+<td>Missing reporting years</td>
+<td>1</td>
+</tr>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">2</th>
+<td>Missing jurisdictions</td>
+<td>4</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">3</th>
+<td>Missing student groups</td>
+<td>4</td>
+</tr>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">4</th>
+<td>Missing average scale scores</td>
+<td>4</td>
+</tr>
+</tbody>
+</table>
+
+</div>
+</div>
+</div>
+</section>
+<section id="removing-invalid-naep-records" class="level2">
+<h2 class="anchored" data-anchor-id="removing-invalid-naep-records">Removing Invalid NAEP Records</h2>
+<p>To improve warehouse data quality, I remove incomplete NAEP records containing missing analytical values.</p>
+<div id="72f70567" class="cell" data-execution_count="40">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb51"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb51-1"><a href="#cb51-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Remove rows with missing critical analytical values.</span></span>
+<span id="cb51-2"><a href="#cb51-2" aria-hidden="true" tabindex="-1"></a>naep_clean_df <span class="op">=</span> naep_clean_df.dropna(</span>
+<span id="cb51-3"><a href="#cb51-3" aria-hidden="true" tabindex="-1"></a>    subset<span class="op">=</span>[</span>
+<span id="cb51-4"><a href="#cb51-4" aria-hidden="true" tabindex="-1"></a>        <span class="st">"reporting_year"</span>,</span>
+<span id="cb51-5"><a href="#cb51-5" aria-hidden="true" tabindex="-1"></a>        <span class="st">"jurisdiction"</span>,</span>
+<span id="cb51-6"><a href="#cb51-6" aria-hidden="true" tabindex="-1"></a>        <span class="st">"student_group"</span>,</span>
+<span id="cb51-7"><a href="#cb51-7" aria-hidden="true" tabindex="-1"></a>        <span class="st">"average_scale_score"</span></span>
+<span id="cb51-8"><a href="#cb51-8" aria-hidden="true" tabindex="-1"></a>    ]</span>
+<span id="cb51-9"><a href="#cb51-9" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb51-10"><a href="#cb51-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb51-11"><a href="#cb51-11" aria-hidden="true" tabindex="-1"></a><span class="co"># Reset the index after cleaning.</span></span>
+<span id="cb51-12"><a href="#cb51-12" aria-hidden="true" tabindex="-1"></a>naep_clean_df <span class="op">=</span> naep_clean_df.reset_index(drop<span class="op">=</span><span class="va">True</span>)</span>
+<span id="cb51-13"><a href="#cb51-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb51-14"><a href="#cb51-14" aria-hidden="true" tabindex="-1"></a><span class="co"># Display the cleaned NAEP dataset.</span></span>
+<span id="cb51-15"><a href="#cb51-15" aria-hidden="true" tabindex="-1"></a>naep_clean_df.head()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-display" data-execution_count="625">
+<div>
+
+
+<table class="dataframe caption-top table table-sm table-striped small" data-border="1">
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th"></th>
+<th data-quarto-table-cell-role="th">reporting_year</th>
+<th data-quarto-table-cell-role="th">jurisdiction</th>
+<th data-quarto-table-cell-role="th">student_group</th>
+<th data-quarto-table-cell-role="th">average_scale_score</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">0</th>
+<td>2024</td>
+<td>National</td>
+<td>All students</td>
+<td>273.833456</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">1</th>
+<td>2024</td>
+<td>Alabama</td>
+<td>All students</td>
+<td>261.769896</td>
+</tr>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">2</th>
+<td>2024</td>
+<td>Alaska</td>
+<td>All students</td>
+<td>263.962653</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">3</th>
+<td>2024</td>
+<td>Arizona</td>
+<td>All students</td>
+<td>269.656164</td>
+</tr>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">4</th>
+<td>2024</td>
+<td>Arkansas</td>
+<td>All students</td>
+<td>266.194834</td>
+</tr>
+</tbody>
+</table>
+
+</div>
+</div>
+</div>
+</section>
+<section id="connecting-naep-records-to-the-year-dimension" class="level2">
+<h2 class="anchored" data-anchor-id="connecting-naep-records-to-the-year-dimension">Connecting NAEP Records to the Year Dimension</h2>
+<p>To prepare NAEP data for warehouse integration, I connect each NAEP record to the year dimension using the reporting year.</p>
+<div id="1c2fec68" class="cell" data-execution_count="41">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb52"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb52-1"><a href="#cb52-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Merge NAEP records with the year dimension to add year_key.</span></span>
+<span id="cb52-2"><a href="#cb52-2" aria-hidden="true" tabindex="-1"></a>naep_with_year_key <span class="op">=</span> naep_clean_df.merge(</span>
+<span id="cb52-3"><a href="#cb52-3" aria-hidden="true" tabindex="-1"></a>    df_year_dim,</span>
+<span id="cb52-4"><a href="#cb52-4" aria-hidden="true" tabindex="-1"></a>    on<span class="op">=</span><span class="st">"reporting_year"</span>,</span>
+<span id="cb52-5"><a href="#cb52-5" aria-hidden="true" tabindex="-1"></a>    how<span class="op">=</span><span class="st">"left"</span></span>
+<span id="cb52-6"><a href="#cb52-6" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb52-7"><a href="#cb52-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb52-8"><a href="#cb52-8" aria-hidden="true" tabindex="-1"></a><span class="co"># Display NAEP records with year dimension keys.</span></span>
+<span id="cb52-9"><a href="#cb52-9" aria-hidden="true" tabindex="-1"></a>naep_with_year_key.head()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-display" data-execution_count="626">
+<div>
+
+
+<table class="dataframe caption-top table table-sm table-striped small" data-border="1">
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th"></th>
+<th data-quarto-table-cell-role="th">reporting_year</th>
+<th data-quarto-table-cell-role="th">jurisdiction</th>
+<th data-quarto-table-cell-role="th">student_group</th>
+<th data-quarto-table-cell-role="th">average_scale_score</th>
+<th data-quarto-table-cell-role="th">year_key</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">0</th>
+<td>2024</td>
+<td>National</td>
+<td>All students</td>
+<td>273.833456</td>
+<td>8.0</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">1</th>
+<td>2024</td>
+<td>Alabama</td>
+<td>All students</td>
+<td>261.769896</td>
+<td>8.0</td>
+</tr>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">2</th>
+<td>2024</td>
+<td>Alaska</td>
+<td>All students</td>
+<td>263.962653</td>
+<td>8.0</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">3</th>
+<td>2024</td>
+<td>Arizona</td>
+<td>All students</td>
+<td>269.656164</td>
+<td>8.0</td>
+</tr>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">4</th>
+<td>2024</td>
+<td>Arkansas</td>
+<td>All students</td>
+<td>266.194834</td>
+<td>8.0</td>
+</tr>
+</tbody>
+</table>
+
+</div>
+</div>
+</div>
+</section>
+<section id="connecting-naep-records-to-the-state-dimension" class="level2">
+<h2 class="anchored" data-anchor-id="connecting-naep-records-to-the-state-dimension">Connecting NAEP Records to the State Dimension</h2>
+<p>To integrate NAEP educational outcomes into the warehouse model, I connect NAEP jurisdictions to the state dimension table.</p>
+<div id="ea367572" class="cell" data-execution_count="42">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb53"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb53-1"><a href="#cb53-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Merge NAEP records with the state dimension table.</span></span>
+<span id="cb53-2"><a href="#cb53-2" aria-hidden="true" tabindex="-1"></a>naep_warehouse_df <span class="op">=</span> naep_with_year_key.merge(</span>
+<span id="cb53-3"><a href="#cb53-3" aria-hidden="true" tabindex="-1"></a>    df_states_dim[</span>
+<span id="cb53-4"><a href="#cb53-4" aria-hidden="true" tabindex="-1"></a>        [<span class="st">"state_key"</span>, <span class="st">"state_name"</span>]</span>
+<span id="cb53-5"><a href="#cb53-5" aria-hidden="true" tabindex="-1"></a>    ],</span>
+<span id="cb53-6"><a href="#cb53-6" aria-hidden="true" tabindex="-1"></a>    left_on<span class="op">=</span><span class="st">"jurisdiction"</span>,</span>
+<span id="cb53-7"><a href="#cb53-7" aria-hidden="true" tabindex="-1"></a>    right_on<span class="op">=</span><span class="st">"state_name"</span>,</span>
+<span id="cb53-8"><a href="#cb53-8" aria-hidden="true" tabindex="-1"></a>    how<span class="op">=</span><span class="st">"left"</span></span>
+<span id="cb53-9"><a href="#cb53-9" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb53-10"><a href="#cb53-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb53-11"><a href="#cb53-11" aria-hidden="true" tabindex="-1"></a><span class="co"># Display NAEP records connected to warehouse state keys.</span></span>
+<span id="cb53-12"><a href="#cb53-12" aria-hidden="true" tabindex="-1"></a>naep_warehouse_df.head()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-display" data-execution_count="627">
+<div>
+
+
+<table class="dataframe caption-top table table-sm table-striped small" data-border="1">
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th"></th>
+<th data-quarto-table-cell-role="th">reporting_year</th>
+<th data-quarto-table-cell-role="th">jurisdiction</th>
+<th data-quarto-table-cell-role="th">student_group</th>
+<th data-quarto-table-cell-role="th">average_scale_score</th>
+<th data-quarto-table-cell-role="th">year_key</th>
+<th data-quarto-table-cell-role="th">state_key</th>
+<th data-quarto-table-cell-role="th">state_name</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">0</th>
+<td>2024</td>
+<td>National</td>
+<td>All students</td>
+<td>273.833456</td>
+<td>8.0</td>
+<td>NaN</td>
+<td>NaN</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">1</th>
+<td>2024</td>
+<td>Alabama</td>
+<td>All students</td>
+<td>261.769896</td>
+<td>8.0</td>
+<td>NaN</td>
+<td>NaN</td>
+</tr>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">2</th>
+<td>2024</td>
+<td>Alaska</td>
+<td>All students</td>
+<td>263.962653</td>
+<td>8.0</td>
+<td>NaN</td>
+<td>NaN</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">3</th>
+<td>2024</td>
+<td>Arizona</td>
+<td>All students</td>
+<td>269.656164</td>
+<td>8.0</td>
+<td>NaN</td>
+<td>NaN</td>
+</tr>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">4</th>
+<td>2024</td>
+<td>Arkansas</td>
+<td>All students</td>
+<td>266.194834</td>
+<td>8.0</td>
+<td>NaN</td>
+<td>NaN</td>
+</tr>
+</tbody>
+</table>
+
+</div>
+</div>
+</div>
+</section>
+<section id="standardizing-naep-jurisdiction-names-for-warehouse-joins" class="level2">
+<h2 class="anchored" data-anchor-id="standardizing-naep-jurisdiction-names-for-warehouse-joins">Standardizing NAEP Jurisdiction Names for Warehouse Joins</h2>
+<p>Before joining NAEP records to the state dimension, I standardize jurisdiction names so they match the uppercase format used in the warehouse dimension table.</p>
+<div id="ae6d5fc0" class="cell" data-execution_count="43">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb54"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb54-1"><a href="#cb54-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Create a standardized uppercase jurisdiction field for warehouse joins.</span></span>
+<span id="cb54-2"><a href="#cb54-2" aria-hidden="true" tabindex="-1"></a>naep_with_year_key[<span class="st">"state_name"</span>] <span class="op">=</span> naep_with_year_key[<span class="st">"jurisdiction"</span>].<span class="bu">str</span>.upper()</span>
+<span id="cb54-3"><a href="#cb54-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb54-4"><a href="#cb54-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Merge NAEP records with the state dimension table using standardized state names.</span></span>
+<span id="cb54-5"><a href="#cb54-5" aria-hidden="true" tabindex="-1"></a>naep_warehouse_df <span class="op">=</span> naep_with_year_key.merge(</span>
+<span id="cb54-6"><a href="#cb54-6" aria-hidden="true" tabindex="-1"></a>    df_states_dim[</span>
+<span id="cb54-7"><a href="#cb54-7" aria-hidden="true" tabindex="-1"></a>        [<span class="st">"state_key"</span>, <span class="st">"state_name"</span>]</span>
+<span id="cb54-8"><a href="#cb54-8" aria-hidden="true" tabindex="-1"></a>    ],</span>
+<span id="cb54-9"><a href="#cb54-9" aria-hidden="true" tabindex="-1"></a>    on<span class="op">=</span><span class="st">"state_name"</span>,</span>
+<span id="cb54-10"><a href="#cb54-10" aria-hidden="true" tabindex="-1"></a>    how<span class="op">=</span><span class="st">"left"</span></span>
+<span id="cb54-11"><a href="#cb54-11" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb54-12"><a href="#cb54-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb54-13"><a href="#cb54-13" aria-hidden="true" tabindex="-1"></a><span class="co"># Display NAEP records connected to warehouse state keys.</span></span>
+<span id="cb54-14"><a href="#cb54-14" aria-hidden="true" tabindex="-1"></a>naep_warehouse_df.head()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-display" data-execution_count="628">
+<div>
+
+
+<table class="dataframe caption-top table table-sm table-striped small" data-border="1">
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th"></th>
+<th data-quarto-table-cell-role="th">reporting_year</th>
+<th data-quarto-table-cell-role="th">jurisdiction</th>
+<th data-quarto-table-cell-role="th">student_group</th>
+<th data-quarto-table-cell-role="th">average_scale_score</th>
+<th data-quarto-table-cell-role="th">year_key</th>
+<th data-quarto-table-cell-role="th">state_name</th>
+<th data-quarto-table-cell-role="th">state_key</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">0</th>
+<td>2024</td>
+<td>National</td>
+<td>All students</td>
+<td>273.833456</td>
+<td>8.0</td>
+<td>NATIONAL</td>
+<td>NaN</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">1</th>
+<td>2024</td>
+<td>Alabama</td>
+<td>All students</td>
+<td>261.769896</td>
+<td>8.0</td>
+<td>ALABAMA</td>
+<td>1.0</td>
+</tr>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">2</th>
+<td>2024</td>
+<td>Alaska</td>
+<td>All students</td>
+<td>263.962653</td>
+<td>8.0</td>
+<td>ALASKA</td>
+<td>2.0</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">3</th>
+<td>2024</td>
+<td>Arizona</td>
+<td>All students</td>
+<td>269.656164</td>
+<td>8.0</td>
+<td>ARIZONA</td>
+<td>4.0</td>
+</tr>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">4</th>
+<td>2024</td>
+<td>Arkansas</td>
+<td>All students</td>
+<td>266.194834</td>
+<td>8.0</td>
+<td>ARKANSAS</td>
+<td>5.0</td>
+</tr>
+</tbody>
+</table>
+
+</div>
+</div>
+</div>
+</section>
+<section id="creating-the-naep-math-performance-fact-table" class="level2">
+<h2 class="anchored" data-anchor-id="creating-the-naep-math-performance-fact-table">Creating the NAEP Math Performance Fact Table</h2>
+<p>After connecting NAEP records to the year and state dimensions, I create a warehouse-ready fact table for Grade 8 mathematics performance.</p>
+<p>This table stores state-level NAEP math scores by reporting year and connects to the warehouse using surrogate keys.</p>
+<div id="8b63ca39" class="cell" data-execution_count="44">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb55"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb55-1"><a href="#cb55-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Create a NAEP math performance fact table using warehouse surrogate keys.</span></span>
+<span id="cb55-2"><a href="#cb55-2" aria-hidden="true" tabindex="-1"></a>fact_naep_math_performance <span class="op">=</span> naep_warehouse_df[</span>
+<span id="cb55-3"><a href="#cb55-3" aria-hidden="true" tabindex="-1"></a>    [</span>
+<span id="cb55-4"><a href="#cb55-4" aria-hidden="true" tabindex="-1"></a>        <span class="st">"state_key"</span>,</span>
+<span id="cb55-5"><a href="#cb55-5" aria-hidden="true" tabindex="-1"></a>        <span class="st">"year_key"</span>,</span>
+<span id="cb55-6"><a href="#cb55-6" aria-hidden="true" tabindex="-1"></a>        <span class="st">"jurisdiction"</span>,</span>
+<span id="cb55-7"><a href="#cb55-7" aria-hidden="true" tabindex="-1"></a>        <span class="st">"student_group"</span>,</span>
+<span id="cb55-8"><a href="#cb55-8" aria-hidden="true" tabindex="-1"></a>        <span class="st">"average_scale_score"</span></span>
+<span id="cb55-9"><a href="#cb55-9" aria-hidden="true" tabindex="-1"></a>    ]</span>
+<span id="cb55-10"><a href="#cb55-10" aria-hidden="true" tabindex="-1"></a>].copy()</span>
+<span id="cb55-11"><a href="#cb55-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb55-12"><a href="#cb55-12" aria-hidden="true" tabindex="-1"></a><span class="co"># Remove records that did not match the state dimension.</span></span>
+<span id="cb55-13"><a href="#cb55-13" aria-hidden="true" tabindex="-1"></a><span class="co"># This excludes national aggregate rows and other non-state records.</span></span>
+<span id="cb55-14"><a href="#cb55-14" aria-hidden="true" tabindex="-1"></a>fact_naep_math_performance <span class="op">=</span> fact_naep_math_performance.dropna(</span>
+<span id="cb55-15"><a href="#cb55-15" aria-hidden="true" tabindex="-1"></a>    subset<span class="op">=</span>[</span>
+<span id="cb55-16"><a href="#cb55-16" aria-hidden="true" tabindex="-1"></a>        <span class="st">"state_key"</span>,</span>
+<span id="cb55-17"><a href="#cb55-17" aria-hidden="true" tabindex="-1"></a>        <span class="st">"year_key"</span>,</span>
+<span id="cb55-18"><a href="#cb55-18" aria-hidden="true" tabindex="-1"></a>        <span class="st">"average_scale_score"</span></span>
+<span id="cb55-19"><a href="#cb55-19" aria-hidden="true" tabindex="-1"></a>    ]</span>
+<span id="cb55-20"><a href="#cb55-20" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb55-21"><a href="#cb55-21" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb55-22"><a href="#cb55-22" aria-hidden="true" tabindex="-1"></a><span class="co"># Convert surrogate keys to integers after removing missing values.</span></span>
+<span id="cb55-23"><a href="#cb55-23" aria-hidden="true" tabindex="-1"></a>fact_naep_math_performance[<span class="st">"state_key"</span>] <span class="op">=</span> fact_naep_math_performance[<span class="st">"state_key"</span>].astype(<span class="bu">int</span>)</span>
+<span id="cb55-24"><a href="#cb55-24" aria-hidden="true" tabindex="-1"></a>fact_naep_math_performance[<span class="st">"year_key"</span>] <span class="op">=</span> fact_naep_math_performance[<span class="st">"year_key"</span>].astype(<span class="bu">int</span>)</span>
+<span id="cb55-25"><a href="#cb55-25" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb55-26"><a href="#cb55-26" aria-hidden="true" tabindex="-1"></a><span class="co"># Display the NAEP math performance fact table.</span></span>
+<span id="cb55-27"><a href="#cb55-27" aria-hidden="true" tabindex="-1"></a>fact_naep_math_performance.head()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-display" data-execution_count="629">
+<div>
+
+
+<table class="dataframe caption-top table table-sm table-striped small" data-border="1">
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th"></th>
+<th data-quarto-table-cell-role="th">state_key</th>
+<th data-quarto-table-cell-role="th">year_key</th>
+<th data-quarto-table-cell-role="th">jurisdiction</th>
+<th data-quarto-table-cell-role="th">student_group</th>
+<th data-quarto-table-cell-role="th">average_scale_score</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">1</th>
+<td>1</td>
+<td>8</td>
+<td>Alabama</td>
+<td>All students</td>
+<td>261.769896</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">2</th>
+<td>2</td>
+<td>8</td>
+<td>Alaska</td>
+<td>All students</td>
+<td>263.962653</td>
+</tr>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">3</th>
+<td>4</td>
+<td>8</td>
+<td>Arizona</td>
+<td>All students</td>
+<td>269.656164</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">4</th>
+<td>5</td>
+<td>8</td>
+<td>Arkansas</td>
+<td>All students</td>
+<td>266.194834</td>
+</tr>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">5</th>
+<td>7</td>
+<td>8</td>
+<td>California</td>
+<td>All students</td>
+<td>268.779818</td>
+</tr>
+</tbody>
+</table>
+
+</div>
+</div>
+</div>
+</section>
+<section id="loading-the-naep-math-performance-fact-table-into-postgresql" class="level2">
+<h2 class="anchored" data-anchor-id="loading-the-naep-math-performance-fact-table-into-postgresql">Loading the NAEP Math Performance Fact Table into PostgreSQL</h2>
+<p>After creating the NAEP math performance fact table, I load it into PostgreSQL so it can be queried with SQL and used for longitudinal educational outcome analysis.</p>
+<div id="6ef24e6d" class="cell" data-execution_count="45">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb56"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb56-1"><a href="#cb56-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Load the NAEP math performance fact table into PostgreSQL.</span></span>
+<span id="cb56-2"><a href="#cb56-2" aria-hidden="true" tabindex="-1"></a>fact_naep_math_performance.to_sql(</span>
+<span id="cb56-3"><a href="#cb56-3" aria-hidden="true" tabindex="-1"></a>    name<span class="op">=</span><span class="st">"fact_naep_math_performance"</span>,</span>
+<span id="cb56-4"><a href="#cb56-4" aria-hidden="true" tabindex="-1"></a>    con<span class="op">=</span>engine,</span>
+<span id="cb56-5"><a href="#cb56-5" aria-hidden="true" tabindex="-1"></a>    schema<span class="op">=</span><span class="st">"public"</span>,</span>
+<span id="cb56-6"><a href="#cb56-6" aria-hidden="true" tabindex="-1"></a>    if_exists<span class="op">=</span><span class="st">"replace"</span>,</span>
+<span id="cb56-7"><a href="#cb56-7" aria-hidden="true" tabindex="-1"></a>    index<span class="op">=</span><span class="va">False</span></span>
+<span id="cb56-8"><a href="#cb56-8" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb56-9"><a href="#cb56-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb56-10"><a href="#cb56-10" aria-hidden="true" tabindex="-1"></a><span class="co"># Confirm successful PostgreSQL table creation.</span></span>
+<span id="cb56-11"><a href="#cb56-11" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"NAEP math performance fact table loaded successfully into PostgreSQL."</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>NAEP math performance fact table loaded successfully into PostgreSQL.</code></pre>
+</div>
+</div>
+</section>
+<section id="verifying-the-naep-math-performance-fact-table-in-postgresql" class="level2">
+<h2 class="anchored" data-anchor-id="verifying-the-naep-math-performance-fact-table-in-postgresql">Verifying the NAEP Math Performance Fact Table in PostgreSQL</h2>
+<p>To confirm the NAEP math performance fact table loaded correctly, I query PostgreSQL and preview the stored educational outcome records.</p>
+<div id="602cfed5" class="cell" data-execution_count="46">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb58"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb58-1"><a href="#cb58-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Query PostgreSQL to preview the NAEP math performance fact table.</span></span>
+<span id="cb58-2"><a href="#cb58-2" aria-hidden="true" tabindex="-1"></a>naep_math_preview_query <span class="op">=</span> <span class="st">"""</span></span>
+<span id="cb58-3"><a href="#cb58-3" aria-hidden="true" tabindex="-1"></a><span class="st">SELECT *</span></span>
+<span id="cb58-4"><a href="#cb58-4" aria-hidden="true" tabindex="-1"></a><span class="st">FROM public.fact_naep_math_performance</span></span>
+<span id="cb58-5"><a href="#cb58-5" aria-hidden="true" tabindex="-1"></a><span class="st">LIMIT 10;</span></span>
+<span id="cb58-6"><a href="#cb58-6" aria-hidden="true" tabindex="-1"></a><span class="st">"""</span></span>
+<span id="cb58-7"><a href="#cb58-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb58-8"><a href="#cb58-8" aria-hidden="true" tabindex="-1"></a><span class="co"># Display the NAEP math performance records.</span></span>
+<span id="cb58-9"><a href="#cb58-9" aria-hidden="true" tabindex="-1"></a>pd.read_sql(naep_math_preview_query, engine)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-display" data-execution_count="631">
+<div>
+
+
+<table class="dataframe caption-top table table-sm table-striped small" data-border="1">
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th"></th>
+<th data-quarto-table-cell-role="th">state_key</th>
+<th data-quarto-table-cell-role="th">year_key</th>
+<th data-quarto-table-cell-role="th">jurisdiction</th>
+<th data-quarto-table-cell-role="th">student_group</th>
+<th data-quarto-table-cell-role="th">average_scale_score</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">0</th>
+<td>1</td>
+<td>8</td>
+<td>Alabama</td>
+<td>All students</td>
+<td>261.769896296059</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">1</th>
+<td>2</td>
+<td>8</td>
+<td>Alaska</td>
+<td>All students</td>
+<td>263.962652757225</td>
+</tr>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">2</th>
+<td>4</td>
+<td>8</td>
+<td>Arizona</td>
+<td>All students</td>
+<td>269.656164092934</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">3</th>
+<td>5</td>
+<td>8</td>
+<td>Arkansas</td>
+<td>All students</td>
+<td>266.194833728906</td>
+</tr>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">4</th>
+<td>7</td>
+<td>8</td>
+<td>California</td>
+<td>All students</td>
+<td>268.779817602202</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">5</th>
+<td>8</td>
+<td>8</td>
+<td>Colorado</td>
+<td>All students</td>
+<td>278.107689530909</td>
+</tr>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">6</th>
+<td>9</td>
+<td>8</td>
+<td>Connecticut</td>
+<td>All students</td>
+<td>276.674248483695</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">7</th>
+<td>10</td>
+<td>8</td>
+<td>Delaware</td>
+<td>All students</td>
+<td>263.057137020663</td>
+</tr>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">8</th>
+<td>11</td>
+<td>8</td>
+<td>District of Columbia</td>
+<td>All students</td>
+<td>261.538791377155</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">9</th>
+<td>12</td>
+<td>8</td>
+<td>Florida</td>
+<td>All students</td>
+<td>267.242907869627</td>
+</tr>
+</tbody>
+</table>
+
+</div>
+</div>
+</div>
+</section>
+<section id="analyzing-top-states-by-naep-grade-8-math-performance" class="level2">
+<h2 class="anchored" data-anchor-id="analyzing-top-states-by-naep-grade-8-math-performance">Analyzing Top States by NAEP Grade 8 Math Performance</h2>
+<p>To begin analyzing educational outcomes, I query PostgreSQL to identify the top 10 states by Grade 8 NAEP mathematics average scale score.</p>
+<div id="32d991ad" class="cell" data-execution_count="47">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb59"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb59-1"><a href="#cb59-1" aria-hidden="true" tabindex="-1"></a><span class="co"># SQL query to identify the top 10 states by NAEP Grade 8 math performance.</span></span>
+<span id="cb59-2"><a href="#cb59-2" aria-hidden="true" tabindex="-1"></a>top_naep_math_states_query <span class="op">=</span> <span class="st">"""</span></span>
+<span id="cb59-3"><a href="#cb59-3" aria-hidden="true" tabindex="-1"></a><span class="st">SELECT</span></span>
+<span id="cb59-4"><a href="#cb59-4" aria-hidden="true" tabindex="-1"></a><span class="st">    s.state_name,</span></span>
+<span id="cb59-5"><a href="#cb59-5" aria-hidden="true" tabindex="-1"></a><span class="st">    y.reporting_year,</span></span>
+<span id="cb59-6"><a href="#cb59-6" aria-hidden="true" tabindex="-1"></a><span class="st">    f.average_scale_score</span></span>
+<span id="cb59-7"><a href="#cb59-7" aria-hidden="true" tabindex="-1"></a><span class="st">FROM public.fact_naep_math_performance f</span></span>
+<span id="cb59-8"><a href="#cb59-8" aria-hidden="true" tabindex="-1"></a><span class="st">JOIN public.dim_states s</span></span>
+<span id="cb59-9"><a href="#cb59-9" aria-hidden="true" tabindex="-1"></a><span class="st">    ON f.state_key = s.state_key</span></span>
+<span id="cb59-10"><a href="#cb59-10" aria-hidden="true" tabindex="-1"></a><span class="st">JOIN public.dim_years y</span></span>
+<span id="cb59-11"><a href="#cb59-11" aria-hidden="true" tabindex="-1"></a><span class="st">    ON f.year_key = y.year_key</span></span>
+<span id="cb59-12"><a href="#cb59-12" aria-hidden="true" tabindex="-1"></a><span class="st">WHERE y.reporting_year = 2024</span></span>
+<span id="cb59-13"><a href="#cb59-13" aria-hidden="true" tabindex="-1"></a><span class="st">ORDER BY f.average_scale_score DESC</span></span>
+<span id="cb59-14"><a href="#cb59-14" aria-hidden="true" tabindex="-1"></a><span class="st">LIMIT 10;</span></span>
+<span id="cb59-15"><a href="#cb59-15" aria-hidden="true" tabindex="-1"></a><span class="st">"""</span></span>
+<span id="cb59-16"><a href="#cb59-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb59-17"><a href="#cb59-17" aria-hidden="true" tabindex="-1"></a><span class="co"># Display the top 10 states by NAEP Grade 8 math score.</span></span>
+<span id="cb59-18"><a href="#cb59-18" aria-hidden="true" tabindex="-1"></a>pd.read_sql(top_naep_math_states_query, engine)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-display" data-execution_count="632">
+<div>
+
+
+<table class="dataframe caption-top table table-sm table-striped small" data-border="1">
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th"></th>
+<th data-quarto-table-cell-role="th">state_name</th>
+<th data-quarto-table-cell-role="th">reporting_year</th>
+<th data-quarto-table-cell-role="th">average_scale_score</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">0</th>
+<td>MASSACHUSETTS</td>
+<td>2024</td>
+<td>283.465558985794</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">1</th>
+<td>WISCONSIN</td>
+<td>2024</td>
+<td>282.649633523366</td>
+</tr>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">2</th>
+<td>MINNESOTA</td>
+<td>2024</td>
+<td>282.087420612381</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">3</th>
+<td>UTAH</td>
+<td>2024</td>
+<td>281.79013940125</td>
+</tr>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">4</th>
+<td>NEW JERSEY</td>
+<td>2024</td>
+<td>281.684697993032</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">5</th>
+<td>SOUTH DAKOTA</td>
+<td>2024</td>
+<td>281.101137171665</td>
+</tr>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">6</th>
+<td>NEBRASKA</td>
+<td>2024</td>
+<td>279.8834957478</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">7</th>
+<td>NORTH DAKOTA</td>
+<td>2024</td>
+<td>279.765445425712</td>
+</tr>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">8</th>
+<td>NEW HAMPSHIRE</td>
+<td>2024</td>
+<td>279.7446422881</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">9</th>
+<td>MONTANA</td>
+<td>2024</td>
+<td>279.082095551632</td>
+</tr>
+</tbody>
+</table>
+
+</div>
+</div>
+</div>
+</section>
+<section id="visualizing-top-naep-grade-8-math-performance-states" class="level2">
+<h2 class="anchored" data-anchor-id="visualizing-top-naep-grade-8-math-performance-states">Visualizing Top NAEP Grade 8 Math Performance States</h2>
+<p>To better interpret educational outcome performance, I create a visualization showing the top 10 states by 2024 NAEP Grade 8 mathematics average scale score.</p>
+<div id="01b59570" class="cell" data-execution_count="48">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb60"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb60-1"><a href="#cb60-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Store the SQL query result in a DataFrame.</span></span>
+<span id="cb60-2"><a href="#cb60-2" aria-hidden="true" tabindex="-1"></a>top_naep_math_states_df <span class="op">=</span> pd.read_sql(</span>
+<span id="cb60-3"><a href="#cb60-3" aria-hidden="true" tabindex="-1"></a>    top_naep_math_states_query,</span>
+<span id="cb60-4"><a href="#cb60-4" aria-hidden="true" tabindex="-1"></a>    engine</span>
+<span id="cb60-5"><a href="#cb60-5" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb60-6"><a href="#cb60-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb60-7"><a href="#cb60-7" aria-hidden="true" tabindex="-1"></a><span class="co"># Convert scores to numeric values and round for readability.</span></span>
+<span id="cb60-8"><a href="#cb60-8" aria-hidden="true" tabindex="-1"></a>top_naep_math_states_df[<span class="st">"average_scale_score"</span>] <span class="op">=</span> pd.to_numeric(</span>
+<span id="cb60-9"><a href="#cb60-9" aria-hidden="true" tabindex="-1"></a>    top_naep_math_states_df[<span class="st">"average_scale_score"</span>]</span>
+<span id="cb60-10"><a href="#cb60-10" aria-hidden="true" tabindex="-1"></a>).<span class="bu">round</span>(<span class="dv">2</span>)</span>
+<span id="cb60-11"><a href="#cb60-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb60-12"><a href="#cb60-12" aria-hidden="true" tabindex="-1"></a><span class="co"># Sort values so the highest-performing states appear at the top.</span></span>
+<span id="cb60-13"><a href="#cb60-13" aria-hidden="true" tabindex="-1"></a>top_naep_math_states_df <span class="op">=</span> top_naep_math_states_df.sort_values(</span>
+<span id="cb60-14"><a href="#cb60-14" aria-hidden="true" tabindex="-1"></a>    by<span class="op">=</span><span class="st">"average_scale_score"</span>,</span>
+<span id="cb60-15"><a href="#cb60-15" aria-hidden="true" tabindex="-1"></a>    ascending<span class="op">=</span><span class="va">True</span></span>
+<span id="cb60-16"><a href="#cb60-16" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb60-17"><a href="#cb60-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb60-18"><a href="#cb60-18" aria-hidden="true" tabindex="-1"></a><span class="co"># Set a focused baseline so differences between close NAEP scores are visible.</span></span>
+<span id="cb60-19"><a href="#cb60-19" aria-hidden="true" tabindex="-1"></a>score_baseline <span class="op">=</span> <span class="dv">260</span></span>
+<span id="cb60-20"><a href="#cb60-20" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb60-21"><a href="#cb60-21" aria-hidden="true" tabindex="-1"></a><span class="co"># Create the chart.</span></span>
+<span id="cb60-22"><a href="#cb60-22" aria-hidden="true" tabindex="-1"></a>plt.figure(figsize<span class="op">=</span>(<span class="dv">14</span>, <span class="dv">7</span>))</span>
+<span id="cb60-23"><a href="#cb60-23" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb60-24"><a href="#cb60-24" aria-hidden="true" tabindex="-1"></a>plt.barh(</span>
+<span id="cb60-25"><a href="#cb60-25" aria-hidden="true" tabindex="-1"></a>    top_naep_math_states_df[<span class="st">"state_name"</span>],</span>
+<span id="cb60-26"><a href="#cb60-26" aria-hidden="true" tabindex="-1"></a>    top_naep_math_states_df[<span class="st">"average_scale_score"</span>] <span class="op">-</span> score_baseline,</span>
+<span id="cb60-27"><a href="#cb60-27" aria-hidden="true" tabindex="-1"></a>    left<span class="op">=</span>score_baseline</span>
+<span id="cb60-28"><a href="#cb60-28" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb60-29"><a href="#cb60-29" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb60-30"><a href="#cb60-30" aria-hidden="true" tabindex="-1"></a><span class="co"># Add score labels at the end of each bar.</span></span>
+<span id="cb60-31"><a href="#cb60-31" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> index, value <span class="kw">in</span> <span class="bu">enumerate</span>(top_naep_math_states_df[<span class="st">"average_scale_score"</span>]):</span>
+<span id="cb60-32"><a href="#cb60-32" aria-hidden="true" tabindex="-1"></a>    plt.text(</span>
+<span id="cb60-33"><a href="#cb60-33" aria-hidden="true" tabindex="-1"></a>        value <span class="op">+</span> <span class="fl">0.15</span>,</span>
+<span id="cb60-34"><a href="#cb60-34" aria-hidden="true" tabindex="-1"></a>        index,</span>
+<span id="cb60-35"><a href="#cb60-35" aria-hidden="true" tabindex="-1"></a>        <span class="ss">f"</span><span class="sc">{</span>value<span class="sc">:.2f}</span><span class="ss">"</span>,</span>
+<span id="cb60-36"><a href="#cb60-36" aria-hidden="true" tabindex="-1"></a>        va<span class="op">=</span><span class="st">"center"</span></span>
+<span id="cb60-37"><a href="#cb60-37" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb60-38"><a href="#cb60-38" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb60-39"><a href="#cb60-39" aria-hidden="true" tabindex="-1"></a><span class="co"># Force the state names to display on the y-axis.</span></span>
+<span id="cb60-40"><a href="#cb60-40" aria-hidden="true" tabindex="-1"></a>plt.yticks(</span>
+<span id="cb60-41"><a href="#cb60-41" aria-hidden="true" tabindex="-1"></a>    <span class="bu">range</span>(<span class="bu">len</span>(top_naep_math_states_df)),</span>
+<span id="cb60-42"><a href="#cb60-42" aria-hidden="true" tabindex="-1"></a>    top_naep_math_states_df[<span class="st">"state_name"</span>]</span>
+<span id="cb60-43"><a href="#cb60-43" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb60-44"><a href="#cb60-44" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb60-45"><a href="#cb60-45" aria-hidden="true" tabindex="-1"></a><span class="co"># Focus the x-axis range for better comparison visibility.</span></span>
+<span id="cb60-46"><a href="#cb60-46" aria-hidden="true" tabindex="-1"></a>plt.xlim(<span class="dv">278</span>, <span class="dv">285</span>)</span>
+<span id="cb60-47"><a href="#cb60-47" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb60-48"><a href="#cb60-48" aria-hidden="true" tabindex="-1"></a><span class="co"># Add chart title and labels.</span></span>
+<span id="cb60-49"><a href="#cb60-49" aria-hidden="true" tabindex="-1"></a>plt.title(<span class="st">"Top 10 States by 2024 NAEP Grade 8 Math Scores"</span>)</span>
+<span id="cb60-50"><a href="#cb60-50" aria-hidden="true" tabindex="-1"></a>plt.xlabel(<span class="st">"Average Scale Score"</span>)</span>
+<span id="cb60-51"><a href="#cb60-51" aria-hidden="true" tabindex="-1"></a>plt.ylabel(<span class="st">"State"</span>)</span>
+<span id="cb60-52"><a href="#cb60-52" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb60-53"><a href="#cb60-53" aria-hidden="true" tabindex="-1"></a><span class="co"># Add enough left margin so state names do not get clipped.</span></span>
+<span id="cb60-54"><a href="#cb60-54" aria-hidden="true" tabindex="-1"></a>plt.subplots_adjust(left<span class="op">=</span><span class="fl">0.28</span>)</span>
+<span id="cb60-55"><a href="#cb60-55" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb60-56"><a href="#cb60-56" aria-hidden="true" tabindex="-1"></a><span class="co"># Display chart.</span></span>
+<span id="cb60-57"><a href="#cb60-57" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="education_tech_impact_pipeline_files/figure-html/cell-49-output-1.png" width="1010" height="597" class="figure-img"></p>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="analyzing-lowest-states-by-naep-grade-8-math-performance" class="level2">
+<h2 class="anchored" data-anchor-id="analyzing-lowest-states-by-naep-grade-8-math-performance">Analyzing Lowest States by NAEP Grade 8 Math Performance</h2>
+<p>To better understand educational performance variation across states, I also analyze the lowest-performing states by 2024 NAEP Grade 8 mathematics average scale score.</p>
+<div id="e5cff711" class="cell" data-execution_count="49">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb61"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb61-1"><a href="#cb61-1" aria-hidden="true" tabindex="-1"></a><span class="co"># SQL query to identify the lowest 10 states by NAEP Grade 8 math performance.</span></span>
+<span id="cb61-2"><a href="#cb61-2" aria-hidden="true" tabindex="-1"></a>lowest_naep_math_states_query <span class="op">=</span> <span class="st">"""</span></span>
+<span id="cb61-3"><a href="#cb61-3" aria-hidden="true" tabindex="-1"></a><span class="st">SELECT</span></span>
+<span id="cb61-4"><a href="#cb61-4" aria-hidden="true" tabindex="-1"></a><span class="st">    s.state_name,</span></span>
+<span id="cb61-5"><a href="#cb61-5" aria-hidden="true" tabindex="-1"></a><span class="st">    y.reporting_year,</span></span>
+<span id="cb61-6"><a href="#cb61-6" aria-hidden="true" tabindex="-1"></a><span class="st">    f.average_scale_score</span></span>
+<span id="cb61-7"><a href="#cb61-7" aria-hidden="true" tabindex="-1"></a><span class="st">FROM public.fact_naep_math_performance f</span></span>
+<span id="cb61-8"><a href="#cb61-8" aria-hidden="true" tabindex="-1"></a><span class="st">JOIN public.dim_states s</span></span>
+<span id="cb61-9"><a href="#cb61-9" aria-hidden="true" tabindex="-1"></a><span class="st">    ON f.state_key = s.state_key</span></span>
+<span id="cb61-10"><a href="#cb61-10" aria-hidden="true" tabindex="-1"></a><span class="st">JOIN public.dim_years y</span></span>
+<span id="cb61-11"><a href="#cb61-11" aria-hidden="true" tabindex="-1"></a><span class="st">    ON f.year_key = y.year_key</span></span>
+<span id="cb61-12"><a href="#cb61-12" aria-hidden="true" tabindex="-1"></a><span class="st">WHERE y.reporting_year = 2024</span></span>
+<span id="cb61-13"><a href="#cb61-13" aria-hidden="true" tabindex="-1"></a><span class="st">ORDER BY f.average_scale_score ASC</span></span>
+<span id="cb61-14"><a href="#cb61-14" aria-hidden="true" tabindex="-1"></a><span class="st">LIMIT 10;</span></span>
+<span id="cb61-15"><a href="#cb61-15" aria-hidden="true" tabindex="-1"></a><span class="st">"""</span></span>
+<span id="cb61-16"><a href="#cb61-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb61-17"><a href="#cb61-17" aria-hidden="true" tabindex="-1"></a><span class="co"># Display the lowest-performing states by NAEP Grade 8 math score.</span></span>
+<span id="cb61-18"><a href="#cb61-18" aria-hidden="true" tabindex="-1"></a>pd.read_sql(lowest_naep_math_states_query, engine)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-display" data-execution_count="634">
+<div>
+
+
+<table class="dataframe caption-top table table-sm table-striped small" data-border="1">
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th"></th>
+<th data-quarto-table-cell-role="th">state_name</th>
+<th data-quarto-table-cell-role="th">reporting_year</th>
+<th data-quarto-table-cell-role="th">average_scale_score</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">0</th>
+<td>PUERTO RICO</td>
+<td>2024</td>
+<td>216.087040632243</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">1</th>
+<td>NEW MEXICO</td>
+<td>2024</td>
+<td>256.210854081077</td>
+</tr>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">2</th>
+<td>WEST VIRGINIA</td>
+<td>2024</td>
+<td>260.769078185284</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">3</th>
+<td>DISTRICT OF COLUMBIA</td>
+<td>2024</td>
+<td>261.538791377155</td>
+</tr>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">4</th>
+<td>ALABAMA</td>
+<td>2024</td>
+<td>261.769896296059</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">5</th>
+<td>DELAWARE</td>
+<td>2024</td>
+<td>263.057137020663</td>
+</tr>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">6</th>
+<td>ALASKA</td>
+<td>2024</td>
+<td>263.962652757225</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">7</th>
+<td>OKLAHOMA</td>
+<td>2024</td>
+<td>264.454031154883</td>
+</tr>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">8</th>
+<td>NEVADA</td>
+<td>2024</td>
+<td>265.177161678326</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">9</th>
+<td>ARKANSAS</td>
+<td>2024</td>
+<td>266.194833728906</td>
+</tr>
+</tbody>
+</table>
+
+</div>
+</div>
+</div>
+</section>
+<section id="visualizing-lowest-naep-grade-8-math-performance-states" class="level2">
+<h2 class="anchored" data-anchor-id="visualizing-lowest-naep-grade-8-math-performance-states">Visualizing Lowest NAEP Grade 8 Math Performance States</h2>
+<p>To better understand lower-performing educational outcome trends, I create a visualization showing the lowest-performing states by 2024 NAEP Grade 8 mathematics average scale score. Puerto Rico appears in the NAEP source data but is excluded from this state-level visualization because the chart focuses on U.S. states only.</p>
+<div id="53e5b71f" class="cell" data-execution_count="50">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb62"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb62-1"><a href="#cb62-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Store the SQL query result in a DataFrame.</span></span>
+<span id="cb62-2"><a href="#cb62-2" aria-hidden="true" tabindex="-1"></a>lowest_naep_math_states_df <span class="op">=</span> pd.read_sql(</span>
+<span id="cb62-3"><a href="#cb62-3" aria-hidden="true" tabindex="-1"></a>    lowest_naep_math_states_query,</span>
+<span id="cb62-4"><a href="#cb62-4" aria-hidden="true" tabindex="-1"></a>    engine</span>
+<span id="cb62-5"><a href="#cb62-5" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb62-6"><a href="#cb62-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb62-7"><a href="#cb62-7" aria-hidden="true" tabindex="-1"></a><span class="co"># Convert scores to numeric values and round for readability.</span></span>
+<span id="cb62-8"><a href="#cb62-8" aria-hidden="true" tabindex="-1"></a>lowest_naep_math_states_df[<span class="st">"average_scale_score"</span>] <span class="op">=</span> pd.to_numeric(</span>
+<span id="cb62-9"><a href="#cb62-9" aria-hidden="true" tabindex="-1"></a>    lowest_naep_math_states_df[<span class="st">"average_scale_score"</span>]</span>
+<span id="cb62-10"><a href="#cb62-10" aria-hidden="true" tabindex="-1"></a>).<span class="bu">round</span>(<span class="dv">2</span>)</span>
+<span id="cb62-11"><a href="#cb62-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb62-12"><a href="#cb62-12" aria-hidden="true" tabindex="-1"></a><span class="co"># Remove Puerto Rico so the visualization scale remains readable.</span></span>
+<span id="cb62-13"><a href="#cb62-13" aria-hidden="true" tabindex="-1"></a>lowest_naep_math_states_df <span class="op">=</span> lowest_naep_math_states_df[</span>
+<span id="cb62-14"><a href="#cb62-14" aria-hidden="true" tabindex="-1"></a>    lowest_naep_math_states_df[<span class="st">"state_name"</span>] <span class="op">!=</span> <span class="st">"PUERTO RICO"</span></span>
+<span id="cb62-15"><a href="#cb62-15" aria-hidden="true" tabindex="-1"></a>]</span>
+<span id="cb62-16"><a href="#cb62-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb62-17"><a href="#cb62-17" aria-hidden="true" tabindex="-1"></a><span class="co"># Sort values for visualization.</span></span>
+<span id="cb62-18"><a href="#cb62-18" aria-hidden="true" tabindex="-1"></a>lowest_naep_math_states_df <span class="op">=</span> lowest_naep_math_states_df.sort_values(</span>
+<span id="cb62-19"><a href="#cb62-19" aria-hidden="true" tabindex="-1"></a>    by<span class="op">=</span><span class="st">"average_scale_score"</span>,</span>
+<span id="cb62-20"><a href="#cb62-20" aria-hidden="true" tabindex="-1"></a>    ascending<span class="op">=</span><span class="va">True</span></span>
+<span id="cb62-21"><a href="#cb62-21" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb62-22"><a href="#cb62-22" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb62-23"><a href="#cb62-23" aria-hidden="true" tabindex="-1"></a><span class="co"># Create the chart.</span></span>
+<span id="cb62-24"><a href="#cb62-24" aria-hidden="true" tabindex="-1"></a>plt.figure(figsize<span class="op">=</span>(<span class="dv">14</span>, <span class="dv">7</span>))</span>
+<span id="cb62-25"><a href="#cb62-25" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb62-26"><a href="#cb62-26" aria-hidden="true" tabindex="-1"></a>plt.barh(</span>
+<span id="cb62-27"><a href="#cb62-27" aria-hidden="true" tabindex="-1"></a>    lowest_naep_math_states_df[<span class="st">"state_name"</span>],</span>
+<span id="cb62-28"><a href="#cb62-28" aria-hidden="true" tabindex="-1"></a>    lowest_naep_math_states_df[<span class="st">"average_scale_score"</span>]</span>
+<span id="cb62-29"><a href="#cb62-29" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb62-30"><a href="#cb62-30" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb62-31"><a href="#cb62-31" aria-hidden="true" tabindex="-1"></a><span class="co"># Add score labels.</span></span>
+<span id="cb62-32"><a href="#cb62-32" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> index, value <span class="kw">in</span> <span class="bu">enumerate</span>(lowest_naep_math_states_df[<span class="st">"average_scale_score"</span>]):</span>
+<span id="cb62-33"><a href="#cb62-33" aria-hidden="true" tabindex="-1"></a>    plt.text(</span>
+<span id="cb62-34"><a href="#cb62-34" aria-hidden="true" tabindex="-1"></a>        value <span class="op">+</span> <span class="fl">0.1</span>,</span>
+<span id="cb62-35"><a href="#cb62-35" aria-hidden="true" tabindex="-1"></a>        index,</span>
+<span id="cb62-36"><a href="#cb62-36" aria-hidden="true" tabindex="-1"></a>        <span class="ss">f"</span><span class="sc">{</span>value<span class="sc">:.2f}</span><span class="ss">"</span>,</span>
+<span id="cb62-37"><a href="#cb62-37" aria-hidden="true" tabindex="-1"></a>        va<span class="op">=</span><span class="st">"center"</span></span>
+<span id="cb62-38"><a href="#cb62-38" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb62-39"><a href="#cb62-39" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb62-40"><a href="#cb62-40" aria-hidden="true" tabindex="-1"></a><span class="co"># Focus the x-axis range.</span></span>
+<span id="cb62-41"><a href="#cb62-41" aria-hidden="true" tabindex="-1"></a>plt.xlim(<span class="dv">255</span>, <span class="dv">267</span>)</span>
+<span id="cb62-42"><a href="#cb62-42" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb62-43"><a href="#cb62-43" aria-hidden="true" tabindex="-1"></a><span class="co"># Add chart labels and title.</span></span>
+<span id="cb62-44"><a href="#cb62-44" aria-hidden="true" tabindex="-1"></a>plt.title(<span class="st">"Lowest Performing States by 2024 NAEP Grade 8 Math Scores"</span>)</span>
+<span id="cb62-45"><a href="#cb62-45" aria-hidden="true" tabindex="-1"></a>plt.xlabel(<span class="st">"Average Scale Score"</span>)</span>
+<span id="cb62-46"><a href="#cb62-46" aria-hidden="true" tabindex="-1"></a>plt.ylabel(<span class="st">"State"</span>)</span>
+<span id="cb62-47"><a href="#cb62-47" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb62-48"><a href="#cb62-48" aria-hidden="true" tabindex="-1"></a><span class="co"># Improve spacing so labels fit properly.</span></span>
+<span id="cb62-49"><a href="#cb62-49" aria-hidden="true" tabindex="-1"></a>plt.subplots_adjust(left<span class="op">=</span><span class="fl">0.28</span>)</span>
+<span id="cb62-50"><a href="#cb62-50" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb62-51"><a href="#cb62-51" aria-hidden="true" tabindex="-1"></a><span class="co"># Display chart.</span></span>
+<span id="cb62-52"><a href="#cb62-52" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="education_tech_impact_pipeline_files/figure-html/cell-51-output-1.png" width="1038" height="597" class="figure-img"></p>
+</figure>
+</div>
+</div>
+</div>
 </section>
 
 </main>

@@ -6,6 +6,59 @@ format: html
 execute:
   echo: true
 ---
+## Project Overview
+
+This project analyzes how education technology adoption may relate to public school performance across the United States.
+
+The goal of this project is to build a portfolio-grade data engineering and analytics workflow that extracts, cleans, transforms, loads, and analyzes education-related datasets using Python, PostgreSQL, SQL, and Quarto.
+
+I use this workflow to develop a reproducible analytics pipeline that can support long-term research into whether access to technology in schools is associated with measurable differences in educational outcomes.
+
+## Project Objectives
+
+The main objectives of this project are to:
+
+- Extract raw public education datasets from national sources
+- Clean and standardize inconsistent government data files
+- Build a PostgreSQL analytical warehouse using fact and dimension tables
+- Connect district, state, year, and educational outcome data through a dimensional model
+- Perform SQL-based analysis directly against PostgreSQL
+- Create visualizations and reporting outputs inside a reproducible Quarto HTML report
+- Prepare the project for future technology adoption and academic performance correlation analysis
+
+## Data Sources
+
+This project uses publicly available education datasets, including:
+
+| Dataset | Source Purpose |
+|---|---|
+| CCD Common Core of Data | District and school operational information |
+| NAEP National Assessment of Educational Progress | State-level academic performance outcomes |
+| CRDC Civil Rights Data Collection | Future technology access and digital equity indicators |
+
+The current phase of the project uses CCD district data and NAEP Grade 8 mathematics performance data. Future phases will integrate CRDC technology access metrics to support deeper analysis of educational technology impact.
+
+## Tools and Technologies
+
+This project uses:
+
+| Tool | Purpose |
+|---|---|
+| Python | Data extraction, cleaning, transformation, and validation |
+| pandas | Data manipulation and profiling |
+| PostgreSQL | Analytical warehouse storage |
+| SQL | Warehouse querying and analysis |
+| Quarto | Reproducible HTML reporting |
+| matplotlib | Data visualization |
+| GitHub | Version control and portfolio documentation |
+
+## Research Direction
+
+The long-term research question behind this project is:
+
+**Does increased access to technology in public schools appear to be associated with measurable differences in academic performance across states, districts, and reporting years?**
+
+This first phase builds the warehouse and analytics foundation. Later phases will integrate additional education technology indicators and perform deeper longitudinal and statistical analysis.
 
 ```{python}
 import os
@@ -409,7 +462,7 @@ plt.xlabel("Total Operational Schools")
 plt.ylabel("State")
 
 # Improve spacing so labels do not overlap.
-plt.tight_layout()
+plt.subplots_adjust(left=0.28)
 
 # Display the chart in the Quarto HTML report.
 plt.show()
@@ -462,7 +515,7 @@ plt.xlabel("Average Operational Schools")
 plt.ylabel("State")
 
 # Improve chart spacing.
-plt.tight_layout()
+plt.subplots_adjust(left=0.28)
 
 # Display the visualization.
 plt.show()
@@ -778,7 +831,7 @@ plt.xlabel("Total Operational Schools")
 plt.ylabel("State")
 
 # Improve chart spacing.
-plt.tight_layout()
+plt.subplots_adjust(left=0.28)
 
 # Display the visualization.
 plt.show()
@@ -825,6 +878,484 @@ The long-term goal of this project is to build a multi-source educational analyt
 | Statistical Modeling | Correlation and regression analysis |
 
 This warehouse foundation will support future educational research, analytics engineering workflows, and large-scale public education analysis.
+
+## Creating Prototype Educational Metrics Records
+
+Before integrating future NAEP and CRDC datasets, I create a prototype educational metrics fact table record structure.
+
+This helps validate how future educational outcome metrics will connect to districts, states, and reporting years inside the warehouse.
+
+```{python}
+# Create prototype educational metric records.
+prototype_metrics = pd.DataFrame({
+    "district_id": [
+        df_district_dim.loc[0, "district_id"],
+        df_district_dim.loc[1, "district_id"]
+    ],
+    "state_key": [
+        1,
+        1
+    ],
+    "year_key": [
+        1,
+        2
+    ],
+    "metric_name": [
+        "average_math_score",
+        "average_reading_score"
+    ],
+    "metric_value": [
+        245.7,
+        251.3
+    ]
+})
+
+# Display the prototype educational metrics records.
+prototype_metrics
+```
+## Loading Prototype Educational Metrics into PostgreSQL
+
+To validate the future warehouse architecture, I load prototype educational metric records into PostgreSQL.
+
+```{python}
+# Load the prototype educational metrics into PostgreSQL.
+prototype_metrics.to_sql(
+    name="fact_educational_metrics_prototype",
+    con=engine,
+    schema="public",
+    if_exists="replace",
+    index=False
+)
+
+# Confirm successful PostgreSQL table creation.
+print("Prototype educational metrics fact table loaded successfully into PostgreSQL.")
+```
+
+## Verifying Prototype Educational Metrics in PostgreSQL
+
+To confirm the prototype educational metrics table loaded correctly, I query PostgreSQL and preview the records.
+
+```{python}
+# Query PostgreSQL to display the prototype educational metrics table.
+prototype_metrics_query = """
+SELECT *
+FROM public.fact_educational_metrics_prototype;
+"""
+
+# Display the prototype educational metrics records.
+pd.read_sql(prototype_metrics_query, engine)
+```
+## Joining Prototype Metrics with Warehouse Dimensions
+
+To validate the prototype educational metrics design, I join the prototype metrics fact table with the state and year dimensions.
+
+This confirms that future NAEP and CRDC metrics can be connected to the warehouse model through surrogate keys.
+
+```{python}
+# SQL query joining prototype metrics to the state and year dimensions.
+prototype_metrics_join_query = """
+SELECT
+    m.district_id,
+    s.state_name,
+    y.reporting_year,
+    m.metric_name,
+    m.metric_value
+FROM public.fact_educational_metrics_prototype m
+JOIN public.dim_states s
+    ON m.state_key = s.state_key
+JOIN public.dim_years y
+    ON m.year_key = y.year_key
+ORDER BY y.reporting_year, m.metric_name;
+"""
+
+# Display the joined prototype metrics records.
+pd.read_sql(prototype_metrics_join_query, engine)
+```
+## Exploring the NAEP Dataset Structure
+
+Before integrating NAEP data into the warehouse, I first inspect the structure of the raw NAEP files.
+
+This helps identify available columns, reporting formats, and educational metrics across years.
+
+```{python}
+# Load the NAEP dataset using the correct header row.
+naep_clean_df = pd.read_excel(
+    "../data/raw/naep/naep_math_grade8_state_2009_2024.Xls",
+    header=8
+)
+
+# Display the cleaned NAEP dataset.
+naep_clean_df.head()
+```
+## Cleaning and Standardizing the NAEP Dataset
+
+To prepare the NAEP dataset for warehouse integration, I standardize column names and select the core analytical fields.
+
+```{python}
+# Standardize NAEP column names.
+naep_clean_df.columns = [
+    "reporting_year",
+    "jurisdiction",
+    "student_group",
+    "average_scale_score"
+]
+
+# Keep only the required analytical columns.
+naep_clean_df = naep_clean_df[
+    [
+        "reporting_year",
+        "jurisdiction",
+        "student_group",
+        "average_scale_score"
+    ]
+]
+
+# Display the cleaned NAEP dataset.
+naep_clean_df.head()
+```
+## Validating the NAEP Dataset
+
+Before integrating NAEP data into the warehouse, I perform several validation checks to confirm data quality and completeness.
+
+```{python}
+# Count missing values in the NAEP dataset.
+naep_missing_values = naep_clean_df.isnull().sum()
+
+# Count total NAEP records.
+naep_total_records = len(naep_clean_df)
+
+# Display validation results.
+naep_validation_results = pd.DataFrame({
+    "validation_check": [
+        "Total NAEP records",
+        "Missing reporting years",
+        "Missing jurisdictions",
+        "Missing student groups",
+        "Missing average scale scores"
+    ],
+    "result": [
+        naep_total_records,
+        naep_missing_values["reporting_year"],
+        naep_missing_values["jurisdiction"],
+        naep_missing_values["student_group"],
+        naep_missing_values["average_scale_score"]
+    ]
+})
+
+# Display NAEP validation results.
+naep_validation_results
+```
+## Removing Invalid NAEP Records
+
+To improve warehouse data quality, I remove incomplete NAEP records containing missing analytical values.
+
+```{python}
+# Remove rows with missing critical analytical values.
+naep_clean_df = naep_clean_df.dropna(
+    subset=[
+        "reporting_year",
+        "jurisdiction",
+        "student_group",
+        "average_scale_score"
+    ]
+)
+
+# Reset the index after cleaning.
+naep_clean_df = naep_clean_df.reset_index(drop=True)
+
+# Display the cleaned NAEP dataset.
+naep_clean_df.head()
+```
+
+## Connecting NAEP Records to the Year Dimension
+
+To prepare NAEP data for warehouse integration, I connect each NAEP record to the year dimension using the reporting year.
+
+```{python}
+# Merge NAEP records with the year dimension to add year_key.
+naep_with_year_key = naep_clean_df.merge(
+    df_year_dim,
+    on="reporting_year",
+    how="left"
+)
+
+# Display NAEP records with year dimension keys.
+naep_with_year_key.head()
+```
+## Connecting NAEP Records to the State Dimension
+
+To integrate NAEP educational outcomes into the warehouse model, I connect NAEP jurisdictions to the state dimension table.
+
+```{python}
+# Merge NAEP records with the state dimension table.
+naep_warehouse_df = naep_with_year_key.merge(
+    df_states_dim[
+        ["state_key", "state_name"]
+    ],
+    left_on="jurisdiction",
+    right_on="state_name",
+    how="left"
+)
+
+# Display NAEP records connected to warehouse state keys.
+naep_warehouse_df.head()
+```
+## Standardizing NAEP Jurisdiction Names for Warehouse Joins
+
+Before joining NAEP records to the state dimension, I standardize jurisdiction names so they match the uppercase format used in the warehouse dimension table.
+
+```{python}
+# Create a standardized uppercase jurisdiction field for warehouse joins.
+naep_with_year_key["state_name"] = naep_with_year_key["jurisdiction"].str.upper()
+
+# Merge NAEP records with the state dimension table using standardized state names.
+naep_warehouse_df = naep_with_year_key.merge(
+    df_states_dim[
+        ["state_key", "state_name"]
+    ],
+    on="state_name",
+    how="left"
+)
+
+# Display NAEP records connected to warehouse state keys.
+naep_warehouse_df.head()
+```
+## Creating the NAEP Math Performance Fact Table
+
+After connecting NAEP records to the year and state dimensions, I create a warehouse-ready fact table for Grade 8 mathematics performance.
+
+This table stores state-level NAEP math scores by reporting year and connects to the warehouse using surrogate keys.
+
+```{python}
+# Create a NAEP math performance fact table using warehouse surrogate keys.
+fact_naep_math_performance = naep_warehouse_df[
+    [
+        "state_key",
+        "year_key",
+        "jurisdiction",
+        "student_group",
+        "average_scale_score"
+    ]
+].copy()
+
+# Remove records that did not match the state dimension.
+# This excludes national aggregate rows and other non-state records.
+fact_naep_math_performance = fact_naep_math_performance.dropna(
+    subset=[
+        "state_key",
+        "year_key",
+        "average_scale_score"
+    ]
+)
+
+# Convert surrogate keys to integers after removing missing values.
+fact_naep_math_performance["state_key"] = fact_naep_math_performance["state_key"].astype(int)
+fact_naep_math_performance["year_key"] = fact_naep_math_performance["year_key"].astype(int)
+
+# Display the NAEP math performance fact table.
+fact_naep_math_performance.head()
+```
+## Loading the NAEP Math Performance Fact Table into PostgreSQL
+
+After creating the NAEP math performance fact table, I load it into PostgreSQL so it can be queried with SQL and used for longitudinal educational outcome analysis.
+
+```{python}
+# Load the NAEP math performance fact table into PostgreSQL.
+fact_naep_math_performance.to_sql(
+    name="fact_naep_math_performance",
+    con=engine,
+    schema="public",
+    if_exists="replace",
+    index=False
+)
+
+# Confirm successful PostgreSQL table creation.
+print("NAEP math performance fact table loaded successfully into PostgreSQL.")
+```
+## Verifying the NAEP Math Performance Fact Table in PostgreSQL
+
+To confirm the NAEP math performance fact table loaded correctly, I query PostgreSQL and preview the stored educational outcome records.
+
+```{python}
+# Query PostgreSQL to preview the NAEP math performance fact table.
+naep_math_preview_query = """
+SELECT *
+FROM public.fact_naep_math_performance
+LIMIT 10;
+"""
+
+# Display the NAEP math performance records.
+pd.read_sql(naep_math_preview_query, engine)
+```
+## Analyzing Top States by NAEP Grade 8 Math Performance
+
+To begin analyzing educational outcomes, I query PostgreSQL to identify the top 10 states by Grade 8 NAEP mathematics average scale score.
+
+```{python}
+# SQL query to identify the top 10 states by NAEP Grade 8 math performance.
+top_naep_math_states_query = """
+SELECT
+    s.state_name,
+    y.reporting_year,
+    f.average_scale_score
+FROM public.fact_naep_math_performance f
+JOIN public.dim_states s
+    ON f.state_key = s.state_key
+JOIN public.dim_years y
+    ON f.year_key = y.year_key
+WHERE y.reporting_year = 2024
+ORDER BY f.average_scale_score DESC
+LIMIT 10;
+"""
+
+# Display the top 10 states by NAEP Grade 8 math score.
+pd.read_sql(top_naep_math_states_query, engine)
+```
+
+## Visualizing Top NAEP Grade 8 Math Performance States
+
+To better interpret educational outcome performance, I create a visualization showing the top 10 states by 2024 NAEP Grade 8 mathematics average scale score.
+```{python}
+# Store the SQL query result in a DataFrame.
+top_naep_math_states_df = pd.read_sql(
+    top_naep_math_states_query,
+    engine
+)
+
+# Convert scores to numeric values and round for readability.
+top_naep_math_states_df["average_scale_score"] = pd.to_numeric(
+    top_naep_math_states_df["average_scale_score"]
+).round(2)
+
+# Sort values so the highest-performing states appear at the top.
+top_naep_math_states_df = top_naep_math_states_df.sort_values(
+    by="average_scale_score",
+    ascending=True
+)
+
+# Set a focused baseline so differences between close NAEP scores are visible.
+score_baseline = 260
+
+# Create the chart.
+plt.figure(figsize=(14, 7))
+
+plt.barh(
+    top_naep_math_states_df["state_name"],
+    top_naep_math_states_df["average_scale_score"] - score_baseline,
+    left=score_baseline
+)
+
+# Add score labels at the end of each bar.
+for index, value in enumerate(top_naep_math_states_df["average_scale_score"]):
+    plt.text(
+        value + 0.15,
+        index,
+        f"{value:.2f}",
+        va="center"
+    )
+
+# Force the state names to display on the y-axis.
+plt.yticks(
+    range(len(top_naep_math_states_df)),
+    top_naep_math_states_df["state_name"]
+)
+
+# Focus the x-axis range for better comparison visibility.
+plt.xlim(278, 285)
+
+# Add chart title and labels.
+plt.title("Top 10 States by 2024 NAEP Grade 8 Math Scores")
+plt.xlabel("Average Scale Score")
+plt.ylabel("State")
+
+# Add enough left margin so state names do not get clipped.
+plt.subplots_adjust(left=0.28)
+
+# Display chart.
+plt.show()
+```
+## Analyzing Lowest States by NAEP Grade 8 Math Performance
+
+To better understand educational performance variation across states, I also analyze the lowest-performing states by 2024 NAEP Grade 8 mathematics average scale score.
+
+```{python}
+# SQL query to identify the lowest 10 states by NAEP Grade 8 math performance.
+lowest_naep_math_states_query = """
+SELECT
+    s.state_name,
+    y.reporting_year,
+    f.average_scale_score
+FROM public.fact_naep_math_performance f
+JOIN public.dim_states s
+    ON f.state_key = s.state_key
+JOIN public.dim_years y
+    ON f.year_key = y.year_key
+WHERE y.reporting_year = 2024
+ORDER BY f.average_scale_score ASC
+LIMIT 10;
+"""
+
+# Display the lowest-performing states by NAEP Grade 8 math score.
+pd.read_sql(lowest_naep_math_states_query, engine)
+```
+## Visualizing Lowest NAEP Grade 8 Math Performance States
+
+To better understand lower-performing educational outcome trends, I create a visualization showing the lowest-performing states by 2024 NAEP Grade 8 mathematics average scale score.
+Puerto Rico appears in the NAEP source data but is excluded from this state-level visualization because the chart focuses on U.S. states only.
+```{python}
+# Store the SQL query result in a DataFrame.
+lowest_naep_math_states_df = pd.read_sql(
+    lowest_naep_math_states_query,
+    engine
+)
+
+# Convert scores to numeric values and round for readability.
+lowest_naep_math_states_df["average_scale_score"] = pd.to_numeric(
+    lowest_naep_math_states_df["average_scale_score"]
+).round(2)
+
+# Remove Puerto Rico so the visualization scale remains readable.
+lowest_naep_math_states_df = lowest_naep_math_states_df[
+    lowest_naep_math_states_df["state_name"] != "PUERTO RICO"
+]
+
+# Sort values for visualization.
+lowest_naep_math_states_df = lowest_naep_math_states_df.sort_values(
+    by="average_scale_score",
+    ascending=True
+)
+
+# Create the chart.
+plt.figure(figsize=(14, 7))
+
+plt.barh(
+    lowest_naep_math_states_df["state_name"],
+    lowest_naep_math_states_df["average_scale_score"]
+)
+
+# Add score labels.
+for index, value in enumerate(lowest_naep_math_states_df["average_scale_score"]):
+    plt.text(
+        value + 0.1,
+        index,
+        f"{value:.2f}",
+        va="center"
+    )
+
+# Focus the x-axis range.
+plt.xlim(255, 267)
+
+# Add chart labels and title.
+plt.title("Lowest Performing States by 2024 NAEP Grade 8 Math Scores")
+plt.xlabel("Average Scale Score")
+plt.ylabel("State")
+
+# Improve spacing so labels fit properly.
+plt.subplots_adjust(left=0.28)
+
+# Display chart.
+plt.show()
+```
 
 
 
