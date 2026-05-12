@@ -1356,6 +1356,92 @@ plt.subplots_adjust(left=0.28)
 # Display chart.
 plt.show()
 ```
+## Analyzing NAEP Grade 8 Math Trends Over Time
+
+To begin longitudinal analysis, I query PostgreSQL to calculate the national trend in NAEP Grade 8 mathematics average scale scores across reporting years.
+```{python}
+# SQL query to analyze the national NAEP Grade 8 math trend over time.
+naep_national_trend_query = """
+SELECT
+    y.reporting_year,
+    f.average_scale_score
+FROM public.fact_naep_math_performance f
+JOIN public.dim_years y
+    ON f.year_key = y.year_key
+WHERE f.jurisdiction = 'Massachusetts'
+ORDER BY y.reporting_year;
+"""
+
+# Display the national NAEP math performance trend.
+pd.read_sql(naep_national_trend_query, engine)
+```
+
+## Visualizing NAEP Grade 8 Math Trends Over Time
+
+To better understand longitudinal educational performance patterns, I create a time-series visualization showing Massachusetts NAEP Grade 8 mathematics performance trends across reporting years.
+
+```{python}
+# Store the SQL query result in a DataFrame.
+naep_trend_df = pd.read_sql(
+    naep_national_trend_query,
+    engine
+)
+
+# Convert values to numeric types.
+naep_trend_df["reporting_year"] = pd.to_numeric(
+    naep_trend_df["reporting_year"]
+)
+
+naep_trend_df["average_scale_score"] = pd.to_numeric(
+    naep_trend_df["average_scale_score"]
+).round(2)
+
+# Create the visualization.
+plt.figure(figsize=(12, 6))
+
+plt.plot(
+    naep_trend_df["reporting_year"],
+    naep_trend_df["average_scale_score"],
+    marker="o",
+    linewidth=3
+)
+
+# Add labels to each data point.
+for x, y in zip(
+    naep_trend_df["reporting_year"],
+    naep_trend_df["average_scale_score"]
+):
+    plt.text(
+        x,
+        y + 0.4,
+        f"{y:.2f}",
+        ha="center"
+    )
+
+# Add chart title and labels.
+plt.title("Massachusetts NAEP Grade 8 Math Trends Over Time")
+plt.xlabel("Reporting Year")
+plt.ylabel("Average Scale Score")
+
+# Improve readability.
+plt.grid(True)
+
+# Display chart.
+plt.show()
+```
+### Educational Trend Interpretation
+
+The Massachusetts NAEP Grade 8 mathematics trend analysis shows relatively stable high performance from 2009 through 2019, followed by a substantial decline beginning in 2022.
+
+Several potential contributing factors may explain this pattern:
+
+- Post-pandemic educational disruption
+- Remote learning transition challenges
+- Unequal access to educational technology resources
+- Student engagement and learning loss
+- Changes in instructional delivery models
+
+This longitudinal trend demonstrates how educational outcome analysis can be integrated into a data warehouse environment to support policy evaluation, educational research, and technology impact assessment initiatives.
 
 
 
