@@ -1788,3 +1788,235 @@ plt.tight_layout()
 # Display chart.
 plt.show()
 ```
+## Preparing CRDC and NAEP State-Level Comparison Data
+
+To begin connecting district characteristics with educational outcomes, I aggregate CRDC enrollment data to the state level and prepare it for comparison with NAEP state performance results.
+
+```{python}
+# SQL query to aggregate CRDC district enrollment to the state level.
+crdc_state_enrollment_query = """
+SELECT
+    state_name,
+    SUM(CAST(enrollment AS NUMERIC)) AS total_enrollment
+FROM public.dim_crdc_district_characteristics
+GROUP BY state_name
+ORDER BY state_name;
+"""
+
+# Display state-level CRDC enrollment totals.
+pd.read_sql(crdc_state_enrollment_query, engine)
+```
+## Joining CRDC Enrollment with 2024 NAEP Math Performance
+
+To begin comparing district characteristics with educational outcomes, I join state-level CRDC enrollment totals with 2024 NAEP Grade 8 mathematics performance scores.
+
+```{python}
+# SQL query to join CRDC state enrollment totals with 2024 NAEP math performance.
+crdc_naep_comparison_query = """
+WITH crdc_state_enrollment AS (
+    SELECT
+        UPPER(state_name) AS state_name,
+        SUM(CAST(enrollment AS NUMERIC)) AS total_enrollment
+    FROM public.dim_crdc_district_characteristics
+    GROUP BY UPPER(state_name)
+),
+naep_2024_scores AS (
+    SELECT
+        s.state_name,
+        f.average_scale_score
+    FROM public.fact_naep_math_performance f
+    JOIN public.dim_states s
+        ON f.state_key = s.state_key
+    JOIN public.dim_years y
+        ON f.year_key = y.year_key
+    WHERE y.reporting_year = 2024
+)
+SELECT
+    n.state_name,
+    c.total_enrollment,
+    CAST(n.average_scale_score AS NUMERIC) AS average_scale_score
+FROM naep_2024_scores n
+JOIN crdc_state_enrollment c
+    ON n.state_name = c.state_name
+ORDER BY average_scale_score DESC;
+"""
+
+# Display the joined CRDC and NAEP comparison dataset.
+pd.read_sql(crdc_naep_comparison_query, engine)
+```
+
+## Visualizing CRDC Enrollment and NAEP Math Performance
+
+To begin exploring relationships between district characteristics and educational outcomes, I create a scatterplot comparing total CRDC district enrollment with 2024 NAEP Grade 8 mathematics performance.
+
+```{python}
+# Store the joined CRDC and NAEP comparison query result in a DataFrame.
+crdc_naep_comparison_df = pd.read_sql(
+    crdc_naep_comparison_query,
+    engine
+)
+
+# Convert numeric fields.
+crdc_naep_comparison_df["total_enrollment"] = pd.to_numeric(
+    crdc_naep_comparison_df["total_enrollment"]
+)
+
+crdc_naep_comparison_df["average_scale_score"] = pd.to_numeric(
+    crdc_naep_comparison_df["average_scale_score"]
+).round(2)
+
+# Select the top 10 states by enrollment.
+top_enrollment_states = crdc_naep_comparison_df.nlargest(
+    10,
+    "total_enrollment"
+)
+
+# Sort values for visualization.
+top_enrollment_states = top_enrollment_states.sort_values(
+    by="total_enrollment",
+    ascending=True
+)
+
+# Create the chart.
+plt.figure(figsize=(12, 6))
+
+bars = plt.barh(
+    top_enrollment_states["state_name"],
+    top_enrollment_states["total_enrollment"]
+)
+
+# Add NAEP score labels to bars.
+for bar, score in zip(
+    bars,
+    top_enrollment_states["average_scale_score"]
+):
+    plt.text(
+        bar.get_width(),
+        bar.get_y() + bar.get_height() / 2,
+        f" NAEP: {score}",
+        va="center"
+    )
+
+# Add chart title and labels.
+plt.title("Top States by Enrollment with 2024 NAEP Math Scores")
+plt.xlabel("Total State Enrollment")
+plt.ylabel("State")
+
+# Add additional chart spacing for labels.
+plt.xlim(
+    0,
+    top_enrollment_states["total_enrollment"].max() * 1.15
+)
+
+# Improve spacing.
+plt.tight_layout()
+
+# Display chart.
+plt.show()
+```
+## CRDC and NAEP Comparison Interpretation
+
+This comparison connects CRDC district enrollment totals with 2024 NAEP Grade 8 mathematics performance scores.
+
+The purpose of this step is not to prove a causal relationship, but to begin exploring whether large enrollment systems show different performance patterns than smaller state systems.
+
+Key observations from this comparison include:
+
+- Larger enrollment states do not automatically produce higher NAEP mathematics scores.
+- Some high-enrollment states perform near the middle of the NAEP score range.
+- Smaller or mid-sized states may outperform larger systems on average scale scores.
+- Enrollment size alone is not enough to explain academic performance outcomes.
+- Future CRDC technology-access indicators will provide stronger explanatory variables for technology impact analysis.
+
+This step establishes the first bridge between district characteristics and educational outcomes inside the warehouse.
+
+
+## Analyzing Enrollment Size and Educational Performance
+
+To further explore district and state educational characteristics, I compare total state enrollment levels with 2024 NAEP Grade 8 mathematics performance scores.
+
+This analysis helps evaluate whether larger educational systems demonstrate different performance patterns than smaller systems.
+
+```{python}
+# Select states with both enrollment and NAEP performance data.
+enrollment_performance_analysis_df = crdc_naep_comparison_df.copy()
+
+# Create enrollment size categories.
+enrollment_performance_analysis_df["enrollment_category"] = pd.cut(
+    enrollment_performance_analysis_df["total_enrollment"],
+    bins=3,
+    labels=[
+        "Small Enrollment States",
+        "Medium Enrollment States",
+        "Large Enrollment States"
+    ]
+)
+
+# Calculate average NAEP scores by enrollment category.
+enrollment_performance_summary = (
+    enrollment_performance_analysis_df
+    .groupby("enrollment_category")["average_scale_score"]
+    .mean()
+    .reset_index()
+)
+
+# Display the enrollment and performance summary.
+enrollment_performance_summary
+```
+
+## Visualizing Enrollment Size and Educational Performance
+
+To make the enrollment-size comparison easier to interpret, I create a bar chart showing average 2024 NAEP Grade 8 math scores by enrollment category.
+```{python}
+# Create the chart.
+plt.figure(figsize=(10, 6))
+
+plt.bar(
+    enrollment_performance_summary["enrollment_category"],
+    enrollment_performance_summary["average_scale_score"]
+)
+
+# Add value labels above each bar.
+for index, value in enumerate(enrollment_performance_summary["average_scale_score"]):
+    plt.text(
+        index,
+        value + 0.2,
+        f"{value:.2f}",
+        ha="center"
+    )
+
+# Focus the y-axis to make differences visible.
+plt.ylim(
+    enrollment_performance_summary["average_scale_score"].min() - 2,
+    enrollment_performance_summary["average_scale_score"].max() + 2
+)
+
+# Add chart title and labels.
+plt.title("Average 2024 NAEP Math Scores by Enrollment Size Category")
+plt.xlabel("Enrollment Category")
+plt.ylabel("Average NAEP Scale Score")
+
+# Rotate labels for readability.
+plt.xticks(rotation=15)
+
+# Improve spacing.
+plt.tight_layout()
+
+# Display chart.
+plt.show()
+```
+## Enrollment Size and Educational Performance Interpretation
+
+The enrollment-size comparison reveals that differences in average NAEP Grade 8 mathematics performance across enrollment categories are relatively modest.
+
+Key observations include:
+
+- Smaller enrollment states demonstrate slightly higher average mathematics performance overall.
+- Large enrollment systems do not necessarily produce stronger educational outcomes.
+- Educational performance variation appears influenced by factors beyond enrollment scale alone.
+- District and statewide operational size may contribute to administrative complexity, instructional consistency, and resource allocation challenges.
+- Additional technology-access and educational equity variables will provide deeper insight into these performance patterns in future analysis phases.
+
+This analysis demonstrates how warehouse-integrated district characteristics can support broader educational outcome evaluation and technology impact research.
+
+
