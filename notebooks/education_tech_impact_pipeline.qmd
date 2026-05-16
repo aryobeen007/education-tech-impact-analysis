@@ -2019,4 +2019,31 @@ Key observations include:
 
 This analysis demonstrates how warehouse-integrated district characteristics can support broader educational outcome evaluation and technology impact research.
 
+## Project Summary and Key Findings
+
+This project demonstrates the development of an end-to-end educational analytics and data engineering workflow using publicly available education datasets.
+
+The primary objective of the project is to evaluate educational outcome trends and explore how district-level characteristics and future technology-access indicators may relate to student performance.
+
+To support this analysis, I:
+
+- Collected educational datasets from multiple public sources
+- Built a PostgreSQL dimensional warehouse environment
+- Designed ETL workflows for data integration and transformation
+- Connected district, state, and educational outcome datasets
+- Performed SQL-based analytical reporting
+- Created visualizations to communicate educational trends and comparisons
+- Evaluated post-pandemic educational performance patterns
+- Integrated district-level CRDC characteristics into the warehouse environment
+
+Key findings from the current analysis include:
+
+- Educational performance varies significantly across states.
+- Post-pandemic NAEP mathematics scores declined across many educational systems.
+- Larger enrollment systems do not necessarily produce stronger educational outcomes.
+- District and state operational characteristics may influence educational performance patterns.
+- Additional technology-access metrics will strengthen future analysis regarding the impact of technology adoption on student outcomes.
+
+This project demonstrates practical experience in data engineering, analytics engineering, PostgreSQL development, ETL pipeline design, SQL analytics, data visualization, and research-oriented reporting workflows.
+
 
