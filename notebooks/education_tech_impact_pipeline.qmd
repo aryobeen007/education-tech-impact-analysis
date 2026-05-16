@@ -2046,4 +2046,408 @@ Key findings from the current analysis include:
 
 This project demonstrates practical experience in data engineering, analytics engineering, PostgreSQL development, ETL pipeline design, SQL analytics, data visualization, and research-oriented reporting workflows.
 
+## Inspecting CRDC Technology-Related Fields
+
+To identify potential technology-access indicators, I search the CRDC dataset for columns related to technology, internet access, computers, and digital learning resources.
+
+```{python}
+# Search CRDC columns for technology-related keywords.
+technology_related_columns = [
+    column for column in df_crdc.columns
+    if any(
+        keyword in column.upper()
+        for keyword in [
+            "TECH",
+            "COMP",
+            "INTERNET",
+            "DIGITAL",
+            "DEVICE",
+            "COMPUTER"
+        ]
+    )
+]
+
+# Display technology-related columns.
+technology_related_columns
+```
+
+## Loading the CRDC Distance Education Dataset
+
+To evaluate technology adoption and digital learning participation, I load the CRDC Distance Education dataset into the analytics workflow.
+```{python}
+# Load the CRDC Distance Education dataset.
+distance_education_path = "../data/raw/crdc/Distance Education.csv"
+
+df_distance_education = pd.read_csv(
+    distance_education_path,
+    encoding="latin1",
+    low_memory=False
+)
+
+# Display dataset dimensions.
+print("Number of rows:", df_distance_education.shape[0])
+print("Number of columns:", df_distance_education.shape[1])
+
+# Display column names.
+df_distance_education.columns.tolist()
+```
+## Cleaning and Standardizing the Distance Education Dataset
+
+Before integrating the distance education dataset into the warehouse workflow, I standardize column names and prepare the dataset for analytical processing.
+
+```{python}
+# Create a cleaned copy of the distance education dataset.
+df_distance_education_clean = df_distance_education.copy()
+
+# Standardize column names.
+df_distance_education_clean.columns = (
+    df_distance_education_clean.columns
+    .str.lower()
+    .str.strip()
+)
+
+# Rename key columns for readability.
+df_distance_education_clean = df_distance_education_clean.rename(columns={
+    "lea_state_name": "state_name",
+    "leaid": "district_id",
+    "lea_name": "district_name",
+    "lea_disted_ind": "distance_education_indicator",
+    "tot_distedenr_m": "male_distance_education_enrollment",
+    "tot_distedenr_f": "female_distance_education_enrollment"
+})
+
+# Display cleaned column names.
+df_distance_education_clean.columns.tolist()
+```
+
+## Analyzing Distance Education Adoption by State
+
+To begin evaluating technology adoption patterns, I summarize the number of districts reporting distance education participation by state.
+
+```{python}
+# SQL-style aggregation using pandas.
+distance_education_by_state = (
+    df_distance_education_clean
+    .groupby("state_name")["distance_education_indicator"]
+    .apply(lambda x: (x == "Yes").sum())
+    .reset_index(name="districts_using_distance_education")
+)
+
+# Sort results.
+distance_education_by_state = (
+    distance_education_by_state
+    .sort_values(
+        by="districts_using_distance_education",
+        ascending=False
+    )
+)
+
+# Display top states using distance education.
+distance_education_by_state.head(10)
+```
+
+## Visualizing Distance Education Adoption by State
+
+To better understand technology adoption patterns, I create a visualization showing the states with the highest number of districts participating in distance education.
+
+```{python}
+# Select the top 10 states using distance education.
+top_distance_education_states = (
+    distance_education_by_state
+    .head(10)
+    .sort_values(
+        by="districts_using_distance_education",
+        ascending=True
+    )
+)
+
+# Create the chart.
+plt.figure(figsize=(12, 6))
+
+plt.barh(
+    top_distance_education_states["state_name"],
+    top_distance_education_states["districts_using_distance_education"]
+)
+
+# Add chart title and labels.
+plt.title("Top States by District Distance Education Adoption")
+plt.xlabel("Districts Using Distance Education")
+plt.ylabel("State")
+
+# Improve spacing.
+plt.tight_layout()
+
+# Display chart.
+plt.show()
+```
+## Creating the Distance Education Adoption Fact Table
+
+To integrate technology adoption into the warehouse workflow, I create a district-level distance education fact table.
+
+```{python}
+# Create a warehouse-ready distance education fact table.
+fact_distance_education = df_distance_education_clean[
+    [
+        "district_id",
+        "state_name",
+        "district_name",
+        "distance_education_indicator",
+        "male_distance_education_enrollment",
+        "female_distance_education_enrollment"
+    ]
+].copy()
+
+# Convert enrollment values to numeric.
+fact_distance_education["male_distance_education_enrollment"] = pd.to_numeric(
+    fact_distance_education["male_distance_education_enrollment"],
+    errors="coerce"
+)
+
+fact_distance_education["female_distance_education_enrollment"] = pd.to_numeric(
+    fact_distance_education["female_distance_education_enrollment"],
+    errors="coerce"
+)
+
+# Create total distance education enrollment.
+fact_distance_education["total_distance_education_enrollment"] = (
+    fact_distance_education["male_distance_education_enrollment"]
+    + fact_distance_education["female_distance_education_enrollment"]
+)
+
+# Display the distance education fact table.
+fact_distance_education.head()
+```
+## Loading the Distance Education Fact Table into PostgreSQL
+
+After creating the distance education fact table, I load it into PostgreSQL so technology adoption metrics can be queried with SQL and connected to the broader education warehouse.
+
+```{python}
+# Load the distance education fact table into PostgreSQL.
+fact_distance_education.to_sql(
+    name="fact_distance_education_adoption",
+    con=engine,
+    schema="public",
+    if_exists="replace",
+    index=False
+)
+
+# Confirm successful PostgreSQL table creation.
+print("Distance education adoption fact table loaded successfully into PostgreSQL.")
+```
+## Verifying the Distance Education Fact Table in PostgreSQL
+
+To confirm the distance education adoption fact table loaded correctly, I query PostgreSQL and preview the stored technology adoption records.
+
+```{python}
+# Query PostgreSQL to preview the distance education adoption fact table.
+distance_education_preview_query = """
+SELECT *
+FROM public.fact_distance_education_adoption
+LIMIT 10;
+"""
+
+# Display distance education adoption records.
+pd.read_sql(distance_education_preview_query, engine)
+```
+## Analyzing Distance Education Enrollment by State
+
+To evaluate the scale of technology-enabled learning participation, I summarize total distance education enrollment by state.
+
+```{python}
+# SQL query to summarize distance education enrollment by state.
+distance_education_enrollment_query = """
+SELECT
+    state_name,
+    SUM(total_distance_education_enrollment) AS total_distance_education_enrollment
+FROM public.fact_distance_education_adoption
+GROUP BY state_name
+ORDER BY total_distance_education_enrollment DESC
+LIMIT 10;
+"""
+
+# Display top states by distance education enrollment.
+pd.read_sql(distance_education_enrollment_query, engine)
+```
+
+## Visualizing Distance Education Enrollment by State
+
+To better understand technology-enabled learning participation, I create a visualization showing the states with the highest distance education enrollment totals.
+
+```{python}
+# Store the distance education enrollment query results in a DataFrame.
+distance_education_enrollment_df = pd.read_sql(
+    distance_education_enrollment_query,
+    engine
+)
+
+# Convert numeric values.
+distance_education_enrollment_df[
+    "total_distance_education_enrollment"
+] = pd.to_numeric(
+    distance_education_enrollment_df[
+        "total_distance_education_enrollment"
+    ]
+)
+
+# Sort values for visualization.
+distance_education_enrollment_df = (
+    distance_education_enrollment_df
+    .sort_values(
+        by="total_distance_education_enrollment",
+        ascending=True
+    )
+)
+
+# Create the chart.
+plt.figure(figsize=(12, 6))
+
+plt.barh(
+    distance_education_enrollment_df["state_name"],
+    distance_education_enrollment_df[
+        "total_distance_education_enrollment"
+    ]
+)
+
+# Add chart title and labels.
+plt.title("Top States by Distance Education Enrollment")
+plt.xlabel("Distance Education Enrollment")
+plt.ylabel("State")
+
+# Improve spacing.
+plt.tight_layout()
+
+# Display chart.
+plt.show()
+```
+
+## Connecting Distance Education Adoption with NAEP Math Performance
+
+To begin evaluating the relationship between technology-enabled learning participation and student outcomes, I join state-level distance education enrollment with 2024 NAEP Grade 8 mathematics performance scores.
+
+```{python}
+# SQL query joining distance education enrollment with 2024 NAEP math scores.
+distance_education_naep_query = """
+WITH distance_education_state AS (
+    SELECT
+        UPPER(state_name) AS state_name,
+        SUM(total_distance_education_enrollment) AS total_distance_education_enrollment
+    FROM public.fact_distance_education_adoption
+    GROUP BY UPPER(state_name)
+),
+naep_2024_scores AS (
+    SELECT
+        s.state_name,
+        CAST(f.average_scale_score AS NUMERIC) AS average_scale_score
+    FROM public.fact_naep_math_performance f
+    JOIN public.dim_states s
+        ON f.state_key = s.state_key
+    JOIN public.dim_years y
+        ON f.year_key = y.year_key
+    WHERE y.reporting_year = 2024
+)
+SELECT
+    n.state_name,
+    d.total_distance_education_enrollment,
+    n.average_scale_score
+FROM naep_2024_scores n
+JOIN distance_education_state d
+    ON n.state_name = d.state_name
+ORDER BY total_distance_education_enrollment DESC;
+"""
+
+# Display the joined distance education and NAEP performance dataset.
+pd.read_sql(distance_education_naep_query, engine)
+```
+## Visualizing Distance Education Enrollment and NAEP Math Performance
+
+To explore the relationship between technology-enabled learning participation and educational outcomes, I visualize state-level distance education enrollment alongside 2024 NAEP Grade 8 mathematics scores.
+
+```{python}
+# Store the joined distance education and NAEP query result in a DataFrame.
+distance_education_naep_df = pd.read_sql(
+    distance_education_naep_query,
+    engine
+)
+
+# Convert numeric fields.
+distance_education_naep_df[
+    "total_distance_education_enrollment"
+] = pd.to_numeric(
+    distance_education_naep_df[
+        "total_distance_education_enrollment"
+    ]
+)
+
+distance_education_naep_df["average_scale_score"] = pd.to_numeric(
+    distance_education_naep_df["average_scale_score"]
+).round(2)
+
+# Select top 10 states by distance education enrollment.
+top_distance_education_naep = distance_education_naep_df.nlargest(
+    10,
+    "total_distance_education_enrollment"
+)
+
+# Sort values for visualization.
+top_distance_education_naep = top_distance_education_naep.sort_values(
+    by="total_distance_education_enrollment",
+    ascending=True
+)
+
+# Create the chart.
+plt.figure(figsize=(12, 6))
+
+bars = plt.barh(
+    top_distance_education_naep["state_name"],
+    top_distance_education_naep[
+        "total_distance_education_enrollment"
+    ]
+)
+
+# Add NAEP score labels to each bar.
+for bar, score in zip(
+    bars,
+    top_distance_education_naep["average_scale_score"]
+):
+    plt.text(
+        bar.get_width(),
+        bar.get_y() + bar.get_height() / 2,
+        f" NAEP: {score}",
+        va="center"
+    )
+
+# Add extra spacing for labels.
+plt.xlim(
+    0,
+    top_distance_education_naep[
+        "total_distance_education_enrollment"
+    ].max() * 1.15
+)
+
+# Add chart title and labels.
+plt.title("Top Distance Education Enrollment States with 2024 NAEP Math Scores")
+plt.xlabel("Distance Education Enrollment")
+plt.ylabel("State")
+
+# Improve spacing.
+plt.tight_layout()
+
+# Display chart.
+plt.show()
+```
+## Distance Education and NAEP Performance Interpretation
+
+This analysis connects district-level distance education participation with 2024 NAEP Grade 8 mathematics performance at the state level.
+
+The goal of this section is not to claim that distance education directly causes higher or lower academic performance. Instead, it provides an early analytical view of how technology-enabled learning participation compares with student outcome measures.
+
+Key observations include:
+
+- States with higher distance education enrollment do not automatically show higher NAEP mathematics scores.
+- Technology-enabled learning participation appears to vary widely across states.
+- Student outcomes are likely influenced by multiple factors, including instructional quality, access, implementation consistency, socioeconomic conditions, and digital equity.
+- Distance education adoption should be evaluated alongside academic performance, enrollment scale, and equity indicators rather than treated as a standalone success measure.
+- This analysis establishes the foundation for deeper technology impact evaluation in future phases.
+
+This step directly supports the core project objective: using integrated education and technology-related datasets to evaluate whether technology adoption appears to support or challenge student outcomes.
 
