@@ -1443,5 +1443,348 @@ Several potential contributing factors may explain this pattern:
 
 This longitudinal trend demonstrates how educational outcome analysis can be integrated into a data warehouse environment to support policy evaluation, educational research, and technology impact assessment initiatives.
 
+## Comparing Longitudinal NAEP Trends Across Multiple States
+
+To better understand variation in educational outcomes across states, I compare long-term NAEP Grade 8 mathematics trends for several high-performing states.
+
+```{python}
+# SQL query to compare longitudinal trends across multiple states.
+multi_state_trend_query = """
+SELECT
+    s.state_name,
+    y.reporting_year,
+    f.average_scale_score
+FROM public.fact_naep_math_performance f
+JOIN public.dim_states s
+    ON f.state_key = s.state_key
+JOIN public.dim_years y
+    ON f.year_key = y.year_key
+WHERE s.state_name IN (
+    'MASSACHUSETTS',
+    'MINNESOTA',
+    'NEW JERSEY',
+    'UTAH'
+)
+ORDER BY s.state_name, y.reporting_year;
+"""
+
+# Display the multi-state trend analysis dataset.
+pd.read_sql(multi_state_trend_query, engine)
+```
+
+## Visualizing Multi-State NAEP Grade 8 Math Trends
+
+To compare educational performance patterns over time, I create a line chart showing NAEP Grade 8 mathematics trends across multiple high-performing states.
+
+```{python}
+# Store the multi-state SQL query result in a DataFrame.
+multi_state_trend_df = pd.read_sql(
+    multi_state_trend_query,
+    engine
+)
+
+# Convert columns to numeric values for plotting.
+multi_state_trend_df["reporting_year"] = pd.to_numeric(
+    multi_state_trend_df["reporting_year"]
+)
+
+multi_state_trend_df["average_scale_score"] = pd.to_numeric(
+    multi_state_trend_df["average_scale_score"]
+).round(2)
+
+# Create the multi-state trend visualization.
+plt.figure(figsize=(12, 6))
+
+for state_name in multi_state_trend_df["state_name"].unique():
+    state_data = multi_state_trend_df[
+        multi_state_trend_df["state_name"] == state_name
+    ]
+
+    plt.plot(
+        state_data["reporting_year"],
+        state_data["average_scale_score"],
+        marker="o",
+        linewidth=2,
+        label=state_name
+    )
+
+# Add chart title and labels.
+plt.title("NAEP Grade 8 Math Trends Across Selected States")
+plt.xlabel("Reporting Year")
+plt.ylabel("Average Scale Score")
+
+# Add legend and grid.
+plt.legend()
+plt.grid(True)
+
+# Improve spacing.
+plt.tight_layout()
+
+# Display chart.
+plt.show()
+```
+
+### Comparative Educational Trend Interpretation
+
+The multi-state NAEP trend analysis reveals several important educational performance patterns across high-performing states.
+
+Key observations include:
+
+- Massachusetts consistently maintains the highest overall mathematics performance levels.
+- Multiple states experienced substantial score declines beginning after 2019.
+- The post-pandemic educational disruption appears visible across nearly all analyzed states.
+- Some states demonstrate stronger recovery stabilization between 2022 and 2024.
+- Longitudinal educational outcome analysis provides valuable insight into statewide instructional resilience and educational system performance.
+
+This comparative analysis demonstrates how dimensional warehouse modeling and longitudinal analytics can support large-scale educational research and policy evaluation initiatives.
 
 
+## Analyzing Post-Pandemic NAEP Math Score Changes
+
+To quantify the post-pandemic change in educational outcomes, I compare each selected state's 2019 NAEP Grade 8 mathematics score against its 2024 score.
+
+
+```{python}
+# SQL query to compare 2019 and 2024 NAEP Grade 8 math scores.
+post_pandemic_change_query = """
+SELECT
+    s.state_name,
+    CAST(MAX(CASE WHEN y.reporting_year = 2019 THEN f.average_scale_score END) AS NUMERIC) AS score_2019,
+    CAST(MAX(CASE WHEN y.reporting_year = 2024 THEN f.average_scale_score END) AS NUMERIC) AS score_2024,
+    CAST(MAX(CASE WHEN y.reporting_year = 2024 THEN f.average_scale_score END) AS NUMERIC)
+        - CAST(MAX(CASE WHEN y.reporting_year = 2019 THEN f.average_scale_score END) AS NUMERIC) AS score_change
+FROM public.fact_naep_math_performance f
+JOIN public.dim_states s
+    ON f.state_key = s.state_key
+JOIN public.dim_years y
+    ON f.year_key = y.year_key
+WHERE s.state_name IN (
+    'MASSACHUSETTS',
+    'MINNESOTA',
+    'NEW JERSEY',
+    'UTAH'
+)
+GROUP BY s.state_name
+ORDER BY score_change ASC;
+"""
+
+# Display the post-pandemic score change results.
+pd.read_sql(post_pandemic_change_query, engine)
+```
+
+## Data Extraction — CRDC LEA Characteristics Dataset
+
+To begin integrating education technology and district-level characteristics into the warehouse, I load the CRDC LEA Characteristics dataset.
+
+This dataset will help support future analysis of district characteristics, technology access indicators, and educational equity patterns.
+
+```{python}
+# Define the relative path to the CRDC LEA Characteristics dataset.
+crdc_file_path = "../data/raw/crdc/LEA Characteristics.csv"
+
+# Load the CRDC CSV file into a pandas DataFrame.
+df_crdc = pd.read_csv(crdc_file_path)
+
+# Display the first five records to confirm the dataset loaded correctly.
+df_crdc.head()
+```
+
+## Initial Data Inspection — CRDC Dataset
+
+In this step, I inspect the CRDC dataset to understand its size, structure, and available fields before selecting columns for warehouse integration.
+
+```{python}
+# Display the number of rows and columns in the CRDC dataset.
+crdc_row_count, crdc_column_count = df_crdc.shape
+
+print(f"Number of CRDC rows: {crdc_row_count}")
+print(f"Number of CRDC columns: {crdc_column_count}")
+
+# Display all CRDC column names to identify fields useful for district characteristics and technology access analysis.
+df_crdc.columns.tolist()
+```
+
+## Selecting CRDC District Characteristic Columns
+
+After inspecting the CRDC dataset, I select district-level fields that can support warehouse integration and future educational equity analysis.
+
+```{python}
+# Select CRDC district characteristic columns for warehouse preparation.
+crdc_columns = [
+    "LEAID",
+    "LEA_NAME",
+    "LEA_STATE",
+    "LEA_STATE_NAME",
+    "LEA_CITY",
+    "LEA_ENR",
+    "LEA_SCHOOLS",
+    "LEA_DESEGPLAN",
+    "LEA_HBPOLICY_IND",
+    "LEA_PS_IND"
+]
+
+# Create a district-focused CRDC DataFrame.
+df_crdc_districts = df_crdc[crdc_columns].copy()
+
+# Display the selected CRDC district characteristic fields.
+df_crdc_districts.head()
+```
+## Cleaning the CRDC District Characteristics Dataset
+
+Before loading CRDC district characteristics into PostgreSQL, I standardize column names and remove duplicate district records.
+
+```{python}
+# Create a copy of the selected CRDC district fields.
+df_crdc_district_dim = df_crdc_districts.copy()
+
+# Remove duplicate district records using the LEAID identifier.
+df_crdc_district_dim = df_crdc_district_dim.drop_duplicates(subset=["LEAID"])
+
+# Standardize column names for PostgreSQL compatibility.
+df_crdc_district_dim.columns = [
+    "district_id",
+    "district_name",
+    "state_code",
+    "state_name",
+    "city",
+    "enrollment",
+    "school_count",
+    "desegregation_plan_indicator",
+    "harassment_bullying_policy_indicator",
+    "preschool_indicator"
+]
+
+# Reset the index after cleaning.
+df_crdc_district_dim = df_crdc_district_dim.reset_index(drop=True)
+
+# Display the cleaned CRDC district characteristics dataset.
+df_crdc_district_dim.head()
+```
+## Loading CRDC District Characteristics into PostgreSQL
+
+After cleaning the CRDC district characteristics dataset, I load it into PostgreSQL as a warehouse table for future district-level enrichment analysis.
+
+```{python}
+# Load the cleaned CRDC district characteristics table into PostgreSQL.
+df_crdc_district_dim.to_sql(
+    name="dim_crdc_district_characteristics",
+    con=engine,
+    schema="public",
+    if_exists="replace",
+    index=False
+)
+
+# Confirm successful PostgreSQL table creation.
+print("CRDC district characteristics table loaded successfully into PostgreSQL.")
+```
+## Verifying the CRDC District Characteristics Table in PostgreSQL
+
+To confirm the CRDC district characteristics table loaded correctly, I query PostgreSQL and preview the stored records.
+
+```{python}
+# Query PostgreSQL to preview the CRDC district characteristics table.
+crdc_preview_query = """
+SELECT *
+FROM public.dim_crdc_district_characteristics
+LIMIT 10;
+"""
+
+# Display the CRDC district characteristics records.
+pd.read_sql(crdc_preview_query, engine)
+```
+
+## Validating the CRDC District Characteristics Dataset
+
+Before using the CRDC district characteristics data for analysis, I perform validation checks to confirm completeness and uniqueness.
+
+```{python}
+# Count missing district identifiers.
+crdc_missing_district_ids = df_crdc_district_dim["district_id"].isnull().sum()
+
+# Count missing state names.
+crdc_missing_state_names = df_crdc_district_dim["state_name"].isnull().sum()
+
+# Count missing enrollment values.
+crdc_missing_enrollment = df_crdc_district_dim["enrollment"].isnull().sum()
+
+# Count duplicate district identifiers.
+crdc_duplicate_district_ids = df_crdc_district_dim["district_id"].duplicated().sum()
+
+# Display validation results.
+crdc_validation_results = pd.DataFrame({
+    "validation_check": [
+        "Missing district IDs",
+        "Missing state names",
+        "Missing enrollment values",
+        "Duplicate district IDs"
+    ],
+    "result": [
+        crdc_missing_district_ids,
+        crdc_missing_state_names,
+        crdc_missing_enrollment,
+        crdc_duplicate_district_ids
+    ]
+})
+
+crdc_validation_results
+```
+## Analyzing CRDC District Enrollment by State
+
+To begin using the CRDC district characteristics table analytically, I summarize total district enrollment by state.
+
+```{python}
+# SQL query to summarize total CRDC enrollment by state.
+crdc_enrollment_by_state_query = """
+SELECT
+    state_name,
+    SUM(CAST(enrollment AS NUMERIC)) AS total_enrollment
+FROM public.dim_crdc_district_characteristics
+GROUP BY state_name
+ORDER BY total_enrollment DESC
+LIMIT 10;
+"""
+
+# Display the top states by total CRDC district enrollment.
+pd.read_sql(crdc_enrollment_by_state_query, engine)
+```
+## Visualizing CRDC District Enrollment by State
+
+To better understand district enrollment distribution, I create a visualization showing the states with the highest total CRDC district enrollment.
+
+```{python}
+# Store the CRDC enrollment query results in a DataFrame.
+crdc_enrollment_df = pd.read_sql(
+    crdc_enrollment_by_state_query,
+    engine
+)
+
+# Convert enrollment values to numeric.
+crdc_enrollment_df["total_enrollment"] = pd.to_numeric(
+    crdc_enrollment_df["total_enrollment"]
+)
+
+# Sort values for visualization.
+crdc_enrollment_df = crdc_enrollment_df.sort_values(
+    by="total_enrollment",
+    ascending=True
+)
+
+# Create the chart.
+plt.figure(figsize=(12, 6))
+
+plt.barh(
+    crdc_enrollment_df["state_name"],
+    crdc_enrollment_df["total_enrollment"]
+)
+
+# Add chart title and labels.
+plt.title("Top States by Total CRDC District Enrollment")
+plt.xlabel("Total Enrollment")
+plt.ylabel("State")
+
+# Improve spacing.
+plt.tight_layout()
+
+# Display chart.
+plt.show()
+```
